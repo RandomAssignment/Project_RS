@@ -1,40 +1,43 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour, IDragHandler, IEndDragHandler
 {
-    Transform playertrans;
-    RectTransform stick;
-    SpriteRenderer playerSR;
+    public RectTransform Stick { get; private set; }
+    private BaseMonster target;
 
     public void OnDrag(PointerEventData eventData)
     {
-        stick.position = eventData.position;
-        float value = stick.rect.width / 2 - 30;
-        if (stick.localPosition.magnitude > value)
+        Stick.position = eventData.position;
+        float value = Stick.rect.width / 2 - 30;
+        if (Stick.localPosition.magnitude > value)
         {
-            stick.localPosition = stick.localPosition.normalized * value;
+            Stick.localPosition = Stick.localPosition.normalized * value;
         }
-        playerSR.flipX = stick.localPosition.x < 0;
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        stick.localPosition = Vector3.zero;
+        Stick.localPosition = Vector3.zero;
     }
 
-    void Start()
+    public void SetTarget(BaseMonster target)
     {
-        playertrans = GameObject.FindGameObjectWithTag("Player").transform;
-        playerSR = playertrans.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
-        stick = transform.GetChild(0).GetComponent<RectTransform>();
+        this.target = target;
     }
 
-    void FixedUpdate()
+    private void Awake()
     {
-        playertrans.Translate(new Vector3(stick.localPosition.normalized.x,0,stick.localPosition.normalized.y) * Time.deltaTime * 10);
+        transform.SetParent(GameObject.FindGameObjectWithTag("Canvas").transform, true);
+        Stick = transform.GetChild(0).GetComponent<RectTransform>();
     }
 
+    private void Update()
+    {
+        if (target is null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+    }
 }

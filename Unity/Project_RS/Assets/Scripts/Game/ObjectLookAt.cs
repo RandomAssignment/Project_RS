@@ -1,19 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class ObjectLooAt : MonoBehaviour
+public class ObjectLookAt : MonoBehaviour
 {
+    private Transform CameraTrans;
 
-    Transform CameraTrans;
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         CameraTrans = Camera.main.transform;
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         transform.LookAt(CameraTrans);
     }
