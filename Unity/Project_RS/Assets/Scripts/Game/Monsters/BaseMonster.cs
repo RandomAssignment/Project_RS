@@ -9,6 +9,8 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
 {
     #region Unity Property
 
+    public GameObject PlayerUiPrefab;
+
     [Tooltip("현재 체력")]
     public int Health;
 
@@ -48,7 +50,12 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
         sceneCamera = GameObject.FindGameObjectWithTag("MainCamera");
         sceneCameraPos = transform.position + sceneCamera.transform.position;
 
-        if(photonView.IsMine)
+        if (PlayerUiPrefab != null)
+        {
+            Instantiate(PlayerUiPrefab).GetComponent<PlayerUI>().SetTarget(this);
+        }
+
+        if (photonView.IsMine)
         {
             GameObject.FindGameObjectWithTag("GameController").GetComponent<PlayerController>().SetTarget(this);
         }
@@ -88,7 +95,7 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
 
     public void Move(Vector3 stickpos)
     {
-        objRigidbody.velocity = 
+        objRigidbody.velocity =
             new Vector3(
                 stickpos.x,
                 0,
