@@ -6,7 +6,8 @@ using UnityEngine;
 
 public sealed class Slime : BaseMonster
 {
-    public Slime()
+
+    public override void Awake()
     {
         Health = MaxHealth = 100;
         Speed = 7;
@@ -29,6 +30,7 @@ public sealed class Slime : BaseMonster
         {
             ["test-skill"] = testSkill
         };
+        base.Awake();
     }
 
     protected override void InitializeOnStart()

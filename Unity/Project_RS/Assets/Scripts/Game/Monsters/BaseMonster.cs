@@ -44,30 +44,22 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
 
     protected abstract void InitializeOnStart();
 
-    private void Awake()
+    public virtual void Awake()
     {
         sceneCamera = GameObject.FindGameObjectWithTag("MainCamera");
         sceneCameraPos = transform.position + sceneCamera.transform.position;
 
-        if (JoysticPrefab != null)
+        if(photonView.IsMine)
         {
-            GameObject ui = Instantiate(JoysticPrefab);
-            ui.SendMessage("SetTarget", this, SendMessageOptions.RequireReceiver);
+            GameObject.FindGameObjectWithTag("GameController").GetComponent<PlayerController>().SetTarget(this);
         }
-
+        objRigidbody = gameObject.GetComponent<Rigidbody>();
         taskCancellation = new CancellationTokenSource();
     }
 
     private void Start()
     {
-        controller = GameObject
-            .FindGameObjectWithTag("Canvas")
-            .gameObject
-            .GetComponentInChildren<PlayerController>();
-
-        objRigidbody = gameObject.GetComponent<Rigidbody>();
         monsterSpriteRenderer = transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
-
         InitializeOnStart();
     }
 
@@ -88,14 +80,6 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (photonView.IsMine)
         {
-            objRigidbody.velocity =
-                new Vector3(
-                    controller.Stick.localPosition.normalized.x,
-                    0,
-                    controller.Stick.localPosition.normalized.y) * Time.deltaTime * Speed * 50;
-
-            photonView.RPC("FlipX", RpcTarget.AllBuffered, controller.Stick.localPosition.x);
-
             sceneCamera.transform.position = transform.position + sceneCameraPos;
         }
         else if ((transform.position - currentPos).sqrMagnitude >= 100)
@@ -108,10 +92,20 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
+    public void Move(Vector3 stickpos)
+    {
+        objRigidbody.velocity = 
+            new Vector3(
+                stickpos.x,
+                0,
+                stickpos.y) * Time.deltaTime * Speed * 50;
+        photonView.RPC("FlipX", RpcTarget.AllBuffered, stickpos.x);
+    }
+
     [PunRPC]
     public void FlipX(float axis)
     {
-        monsterSpriteRenderer.flipX = axis < 0;
+        monsterSpriteRenderer.flipX = axis > 0;
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

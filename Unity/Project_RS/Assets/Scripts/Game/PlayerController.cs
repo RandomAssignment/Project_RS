@@ -32,6 +32,11 @@ public class PlayerController : MonoBehaviour, IDragHandler, IEndDragHandler
         Stick = transform.GetChild(0).GetComponent<RectTransform>();
     }
 
+    void FixedUpdate()
+    {
+        target.Move(Stick.localPosition.normalized);
+    }
+
     private void Update()
     {
         if (target is null)
