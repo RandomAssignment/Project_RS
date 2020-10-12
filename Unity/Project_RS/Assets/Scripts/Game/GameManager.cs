@@ -33,8 +33,8 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             Debug.Log($"{PhotonNetwork.NickName}은 이 방의 방장입니다.");
-            Debug.Log("Loading level...");
-            PhotonNetwork.LoadLevel("Prototype");
+            //Debug.Log("Loading level...");
+            //PhotonNetwork.LoadLevel("Prototype");
         }
     }
 }
