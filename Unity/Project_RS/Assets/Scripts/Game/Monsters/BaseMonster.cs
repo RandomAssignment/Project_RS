@@ -21,8 +21,6 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
     [Tooltip("방어막")]
     public int ShieldGage;
 
-    public GameObject JoysticPrefab;
-
     #endregion
 
     /// <summary>
@@ -39,13 +37,14 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
     private Vector3 currentPos;
 
     private Rigidbody objRigidbody;
-    private PlayerController controller;
     private SpriteRenderer monsterSpriteRenderer;
 
-    protected abstract void InitializeOnStart();
+    protected abstract void InitializeMonster();
 
-    public virtual void Awake()
+    private void Awake()
     {
+        InitializeMonster();
+
         sceneCamera = GameObject.FindGameObjectWithTag("MainCamera");
         sceneCameraPos = transform.position + sceneCamera.transform.position;
 
@@ -56,11 +55,6 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
         objRigidbody = gameObject.GetComponent<Rigidbody>();
         monsterSpriteRenderer = transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
         taskCancellation = new CancellationTokenSource();
-    }
-
-    private void Start()
-    {
-        InitializeOnStart();
     }
 
     private void OnDestroy()

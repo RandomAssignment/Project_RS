@@ -6,8 +6,7 @@ using UnityEngine;
 
 public sealed class Slime : BaseMonster
 {
-
-    public override void Awake()
+    protected override void InitializeMonster()
     {
         Health = MaxHealth = 100;
         Speed = 7;
@@ -30,12 +29,10 @@ public sealed class Slime : BaseMonster
         {
             ["test-skill"] = testSkill
         };
-        base.Awake();
     }
 
-    protected override void InitializeOnStart()
+    private void Start()
     {
-        
         if (photonView.IsMine)
         {
             Punch(this, taskCancellation.Token);
@@ -46,5 +43,4 @@ public sealed class Slime : BaseMonster
     {
         Task.Run(() => Skills["test-skill"].Use(this, target, cancellation));
     }
-
 }

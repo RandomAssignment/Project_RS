@@ -137,8 +137,6 @@ MonoBehaviour:
   MaxHealth: 0
   Speed: 0
   ShieldGage: 0
-  JoysticPrefab: {fileID: 5736518031719809736, guid: cf9f2468d5b79f440903283af4fad60b,
-    type: 3}
 --- !u!1 &4100068645431076839
 GameObject:
   m_ObjectHideFlags: 0
