@@ -54,12 +54,12 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
             GameObject.FindGameObjectWithTag("GameController").GetComponent<PlayerController>().SetTarget(this);
         }
         objRigidbody = gameObject.GetComponent<Rigidbody>();
-        monsterSpriteRenderer = transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
         taskCancellation = new CancellationTokenSource();
     }
 
     private void Start()
     {
+        monsterSpriteRenderer = transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
         InitializeOnStart();
     }
 
@@ -105,7 +105,7 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     public void FlipX(float axis)
     {
-        monsterSpriteRenderer.flipX = axis < 0;
+        monsterSpriteRenderer.flipX = axis > 0;
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
