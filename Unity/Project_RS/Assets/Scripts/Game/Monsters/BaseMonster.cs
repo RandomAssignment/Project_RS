@@ -100,12 +100,17 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
                 stickpos.x,
                 0,
                 stickpos.y) * Time.deltaTime * Speed * 50;
+
         photonView.RPC("FlipX", RpcTarget.AllBuffered, stickpos.x);
     }
 
     [PunRPC]
     public void FlipX(float axis)
     {
+        if (axis == 0) // 조이스틱이 움직이지 않으면 바로 이전 상태 유지
+        {
+            return;
+        }
         monsterSpriteRenderer.flipX = axis < 0;
     }
 
