@@ -38,10 +38,10 @@ public sealed class Slime : BaseMonster
 
     private void PunchLogic(BaseMonster me, BaseMonster target, CancellationToken cancellation)
     {
-        target.Health -= 35;
+        target.HitPlayer(10, me);
         Debug.Log("펀치1");
         Task.Delay(5000, cancellation).Wait();
-        target.Health -= 70;
+        target.HitPlayer(100, me);
         Debug.Log("펀치2");
     }
 }

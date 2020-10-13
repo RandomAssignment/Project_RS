@@ -68,6 +68,10 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
     private Rigidbody _objRigidbody;
     private SpriteRenderer _monsterSpriteRenderer;
 
+    private GameObject _playerUI;
+
+    private bool _isDead;
+
     protected abstract void InitializeMonster();
 
     private void Awake()
@@ -79,7 +83,8 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
 
         if (PlayerUiPrefab != null)
         {
-            Instantiate(PlayerUiPrefab).GetComponent<PlayerUI>().SetTarget(this);
+            _playerUI = Instantiate(PlayerUiPrefab);
+            _playerUI.GetComponent<PlayerUI>().SetTarget(this);
         }
 
         if (photonView.IsMine)
@@ -120,6 +125,28 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
+    /// <summary>
+    /// 플레이어에게 데미지를 준다. 만약 데미지를 줘서 체력이 0이 되면 플레이어는 죽는다.
+    /// </summary>
+    /// <param name="damage">주는 데미지</param>
+    /// <param name="attacker">공격자</param>
+    public void HitPlayer(int damage, BaseMonster attacker)
+    {
+        if (_isDead)
+        {
+            return;
+        }
+
+        Health -= damage;
+        Debug.Log($"damage: {damage}, attacker: {attacker.photonView.Owner.NickName}");
+        if (Health == 0)
+        {
+            Debug.Log($"hp is 0.");
+            photonView.RPC(nameof(Dead), RpcTarget.All, attacker);
+            Debug.Log("RPC 보냄");
+        }
+    }
+
     public void Move(Vector3 stickpos)
     {
         _objRigidbody.velocity =
@@ -128,7 +155,7 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
                 0,
                 stickpos.y) * Time.deltaTime * Speed * 50;
 
-        photonView.RPC("FlipX", RpcTarget.AllBuffered, stickpos.x);
+        photonView.RPC(nameof(FlipX), RpcTarget.AllBuffered, stickpos.x);
     }
 
     [PunRPC]
@@ -141,6 +168,25 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
         _monsterSpriteRenderer.flipX = axis < 0;
     }
 
+    /// <summary>
+    /// 플레이어가 죽었을 때 실행
+    /// </summary>
+    /// <param name="attacker">공격자</param>
+    [PunRPC]
+    public void Dead(BaseMonster attacker)
+    {
+        Debug.Log("Dead RPC executed");
+        Debug.Log($"attacker: {attacker.photonView.Owner.NickName}");
+        gameObject.SetActive(false);
+        _playerUI.SetActive(false);
+        _isDead = true;
+
+        if (attacker != null)
+        {
+            GameManager.Instance.AddKillLog(attacker, this);
+        }
+    }
+
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
@@ -149,6 +195,7 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
             stream.SendNext(_health);
             stream.SendNext(_maxHealth);
             stream.SendNext(_speed);
+            stream.SendNext(_isDead);
         }
         else
         {
@@ -156,6 +203,7 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
             _health = (int)stream.ReceiveNext();
             _maxHealth = (int)stream.ReceiveNext();
             _speed = (float)stream.ReceiveNext();
+            _isDead = (bool)stream.ReceiveNext();
         }
     }
 }

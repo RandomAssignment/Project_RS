@@ -135,10 +135,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerUiPrefab: {fileID: 4993088276567271056, guid: 43efb47efcd30fc4196093e9c514ab07,
     type: 3}
-  Health: 0
-  MaxHealth: 0
-  Speed: 0
-  ShieldGage: 0
+  _health: 0
+  _maxHealth: 0
+  _speed: 0
 --- !u!1 &4100068645431076839
 GameObject:
   m_ObjectHideFlags: 0

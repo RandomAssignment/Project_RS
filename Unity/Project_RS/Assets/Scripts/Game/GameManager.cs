@@ -32,4 +32,15 @@ public class GameManager : MonoBehaviourPunCallbacks
         Debug.Log($"Player {newPlayer.NickName}이 들어왔습니다.");
         Debug.Log($"{PhotonNetwork.MasterClient.NickName}가 이 방의 방장입니다.");
     }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        base.OnPlayerLeftRoom(otherPlayer);
+    }
+
+    public void AddKillLog(BaseMonster killer, BaseMonster target)
+    {
+        Debug.Log($"Kill: {killer.photonView.Owner.NickName} -> {target.photonView.Owner.NickName}");
+        // 데이터 추가 작업 필요
+    }
 }

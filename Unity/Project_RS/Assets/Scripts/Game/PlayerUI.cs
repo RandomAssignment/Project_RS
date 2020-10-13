@@ -32,11 +32,6 @@ public class PlayerUI : MonoBehaviour
             return;
         }
 
-        if (_target.Health < 0)
-        {
-            return;
-        }
-
         HealthBarImage.fillAmount = (float)_target.Health / _target.MaxHealth;
     }
 
