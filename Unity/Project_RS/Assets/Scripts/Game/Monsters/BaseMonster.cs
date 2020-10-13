@@ -1,7 +1,7 @@
-﻿using Photon.Pun;
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
+
+using Photon.Pun;
 
 using UnityEngine;
 
@@ -11,19 +11,37 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
 
     public GameObject PlayerUiPrefab;
 
+    [SerializeField]
     [Tooltip("현재 체력")]
-    public int Health;
+    private int _health;
 
+    [SerializeField]
     [Tooltip("최대 체력")]
-    public int MaxHealth;
+    private int _maxHealth;
 
+    [SerializeField]
     [Tooltip("현재 스피드")]
-    public float Speed;
-
-    [Tooltip("방어막")]
-    public int ShieldGage;
+    private float _speed;
 
     #endregion
+
+    public int Health
+    {
+        get => _health;
+        set => _health = value < 0 ? 0 : value;
+    }
+
+    public int MaxHealth
+    {
+        get => _maxHealth;
+        set => _maxHealth = value < 0 ? 1 : value;
+    }
+
+    public float Speed
+    {
+        get => _speed;
+        set => _speed = value < 0 ? 0 : value;
+    }
 
     /// <summary>
     /// 스킬 목록 [skill-id, skill-instance]
@@ -119,18 +137,16 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
         if (stream.IsWriting)
         {
             stream.SendNext(transform.position);
-            stream.SendNext(Health);
-            stream.SendNext(MaxHealth);
-            stream.SendNext(Speed);
-            stream.SendNext(ShieldGage);
+            stream.SendNext(_health);
+            stream.SendNext(_maxHealth);
+            stream.SendNext(_speed);
         }
         else
         {
             _currentPos = (Vector3)stream.ReceiveNext();
-            Health = (int)stream.ReceiveNext();
-            MaxHealth = (int)stream.ReceiveNext();
-            Speed = (float)stream.ReceiveNext();
-            ShieldGage = (int)stream.ReceiveNext();
+            _health = (int)stream.ReceiveNext();
+            _maxHealth = (int)stream.ReceiveNext();
+            _speed = (float)stream.ReceiveNext();
         }
     }
 }

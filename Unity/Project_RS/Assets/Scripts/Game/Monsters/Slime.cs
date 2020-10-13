@@ -10,20 +10,12 @@ public sealed class Slime : BaseMonster
     {
         Health = MaxHealth = 100;
         Speed = 7;
-        ShieldGage = 10;
 
         Skill testSkill = new Skill(
             "테스트 스킬",
             "테스트 스킬이다.",
             cooldown: 5,
-            (me, target, cancel) =>
-            {
-                target.Health -= 35;
-                Debug.Log("펀치1");
-                Task.Delay(5000, cancel).Wait();
-                target.Health -= 50;
-                Debug.Log("펀치2");
-            });
+            PunchLogic);
 
         Skills = new Dictionary<string, Skill>
         {
@@ -42,5 +34,14 @@ public sealed class Slime : BaseMonster
     public void Punch(BaseMonster target, CancellationToken cancellation)
     {
         Task.Run(() => Skills["test-skill"].Use(this, target, cancellation));
+    }
+
+    private void PunchLogic(BaseMonster me, BaseMonster target, CancellationToken cancellation)
+    {
+        target.Health -= 35;
+        Debug.Log("펀치1");
+        Task.Delay(5000, cancellation).Wait();
+        target.Health -= 70;
+        Debug.Log("펀치2");
     }
 }
