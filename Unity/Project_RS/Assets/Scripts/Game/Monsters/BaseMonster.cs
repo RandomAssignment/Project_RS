@@ -25,18 +25,27 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
 
     #endregion
 
+    /// <summary>
+    /// 현재 체력. 입력값이 0보다 작으면 0으로 저장된다.
+    /// </summary>
     public int Health
     {
         get => _health;
         set => _health = value < 0 ? 0 : value;
     }
 
+    /// <summary>
+    /// 최대 체력. 입력값이 1보다 작으면 1로 저장된다.
+    /// </summary>
     public int MaxHealth
     {
         get => _maxHealth;
-        set => _maxHealth = value < 0 ? 1 : value;
+        set => _maxHealth = value < 1 ? 1 : value;
     }
 
+    /// <summary>
+    /// 현재 스피드. 입력값이 0보다 작으면 0으로 저장된다.
+    /// </summary>
     public float Speed
     {
         get => _speed;
