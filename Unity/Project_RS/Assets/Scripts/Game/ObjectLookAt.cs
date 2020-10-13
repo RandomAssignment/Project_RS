@@ -2,17 +2,17 @@
 
 public class ObjectLookAt : MonoBehaviour
 {
-    private Transform CameraTrans;
+    private Transform _cameraTrans;
 
     // Start is called before the first frame update
     private void Start()
     {
-        CameraTrans = Camera.main.transform;
+        _cameraTrans = Camera.main.transform;
     }
 
     // Update is called once per frame
     private void Update()
     {
-        transform.LookAt(CameraTrans);
+        transform.LookAt(_cameraTrans);
     }
 }

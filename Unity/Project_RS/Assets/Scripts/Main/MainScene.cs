@@ -8,7 +8,7 @@ public class MainScene : MonoBehaviourPunCallbacks
     public byte MaxPlayersPerRoom = 5;
 
     private const string GameVersion = "1";
-    private bool isConnecting;
+    private bool _isConnecting;
 
     private void Awake()
     {
@@ -20,7 +20,7 @@ public class MainScene : MonoBehaviourPunCallbacks
 
     public void Connect()
     {
-        isConnecting = true;
+        _isConnecting = true;
         if (PhotonNetwork.IsConnected)
         {
             PhotonNetwork.JoinRandomRoom();
@@ -37,7 +37,7 @@ public class MainScene : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         Debug.Log("OnConnectedToMaster() 호출됨");
-        if (isConnecting)
+        if (_isConnecting)
         {
             PhotonNetwork.JoinRandomRoom();
         }

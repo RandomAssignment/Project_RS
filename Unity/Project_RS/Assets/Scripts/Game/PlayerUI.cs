@@ -7,7 +7,7 @@ public class PlayerUI : MonoBehaviour
     public Image HealthBarImage;
     public Vector3 ScreenOffset = new Vector3(0f, 30f, 0f);
 
-    private BaseMonster target;
+    private BaseMonster _target;
 
     private void Awake()
     {
@@ -16,7 +16,7 @@ public class PlayerUI : MonoBehaviour
 
     public void SetTarget(BaseMonster target)
     {
-        this.target = target;
+        _target = target;
 
         if (PlayerNameText != null)
         {
@@ -26,25 +26,25 @@ public class PlayerUI : MonoBehaviour
 
     private void Update()
     {
-        if (target == null)
+        if (_target == null)
         {
             Destroy(gameObject);
             return;
         }
 
-        if (target.Health < 0)
+        if (_target.Health < 0)
         {
             return;
         }
 
-        HealthBarImage.fillAmount = (float)target.Health / target.MaxHealth;
+        HealthBarImage.fillAmount = (float)_target.Health / _target.MaxHealth;
     }
 
     private void LateUpdate()
     {
-        if (target != null)
+        if (_target != null)
         {
-            transform.position = Camera.main.WorldToScreenPoint(target.transform.position) + ScreenOffset;
+            transform.position = Camera.main.WorldToScreenPoint(_target.transform.position) + ScreenOffset;
         }
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 public class PlayerController : MonoBehaviour, IDragHandler, IEndDragHandler
 {
     public RectTransform Stick { get; private set; }
-    private BaseMonster target;
+    private BaseMonster _target;
 
     public void OnDrag(PointerEventData eventData)
     {
@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour, IDragHandler, IEndDragHandler
 
     public void SetTarget(BaseMonster target)
     {
-        this.target = target;
+        _target = target;
     }
 
     private void Awake()
@@ -34,12 +34,12 @@ public class PlayerController : MonoBehaviour, IDragHandler, IEndDragHandler
 
     private void FixedUpdate()
     {
-        target.Move(Stick.localPosition.normalized);
+        _target.Move(Stick.localPosition.normalized);
     }
 
     private void Update()
     {
-        if (target == null)
+        if (_target == null)
         {
             Destroy(gameObject);
             return;

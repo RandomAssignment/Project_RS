@@ -32,14 +32,14 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
 
     protected CancellationTokenSource taskCancellation;
 
-    private GameObject sceneCamera;
-    private Vector3 sceneCameraPos;
+    private GameObject _sceneCamera;
+    private Vector3 _sceneCameraPos;
 
     // private bool isDead = false;
-    private Vector3 currentPos;
+    private Vector3 _currentPos;
 
-    private Rigidbody objRigidbody;
-    private SpriteRenderer monsterSpriteRenderer;
+    private Rigidbody _objRigidbody;
+    private SpriteRenderer _monsterSpriteRenderer;
 
     protected abstract void InitializeMonster();
 
@@ -47,8 +47,8 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
     {
         InitializeMonster();
 
-        sceneCamera = GameObject.FindGameObjectWithTag("MainCamera");
-        sceneCameraPos = transform.position + sceneCamera.transform.position;
+        _sceneCamera = GameObject.FindGameObjectWithTag("MainCamera");
+        _sceneCameraPos = transform.position + _sceneCamera.transform.position;
 
         if (PlayerUiPrefab != null)
         {
@@ -59,8 +59,8 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
         {
             GameObject.FindGameObjectWithTag("GameController").GetComponent<PlayerController>().SetTarget(this);
         }
-        objRigidbody = gameObject.GetComponent<Rigidbody>();
-        monsterSpriteRenderer = transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
+        _objRigidbody = gameObject.GetComponent<Rigidbody>();
+        _monsterSpriteRenderer = transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
         taskCancellation = new CancellationTokenSource();
     }
 
@@ -81,21 +81,21 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (photonView.IsMine)
         {
-            sceneCamera.transform.position = transform.position + sceneCameraPos;
+            _sceneCamera.transform.position = transform.position + _sceneCameraPos;
         }
-        else if ((transform.position - currentPos).sqrMagnitude >= 100)
+        else if ((transform.position - _currentPos).sqrMagnitude >= 100)
         {
-            transform.position = currentPos;
+            transform.position = _currentPos;
         }
         else
         {
-            transform.position = Vector3.Lerp(transform.position, currentPos, Time.deltaTime * 10);
+            transform.position = Vector3.Lerp(transform.position, _currentPos, Time.deltaTime * 10);
         }
     }
 
     public void Move(Vector3 stickpos)
     {
-        objRigidbody.velocity =
+        _objRigidbody.velocity =
             new Vector3(
                 stickpos.x,
                 0,
@@ -111,7 +111,7 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
         {
             return;
         }
-        monsterSpriteRenderer.flipX = axis < 0;
+        _monsterSpriteRenderer.flipX = axis < 0;
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -126,7 +126,7 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
         }
         else
         {
-            currentPos = (Vector3)stream.ReceiveNext();
+            _currentPos = (Vector3)stream.ReceiveNext();
             Health = (int)stream.ReceiveNext();
             MaxHealth = (int)stream.ReceiveNext();
             Speed = (float)stream.ReceiveNext();
