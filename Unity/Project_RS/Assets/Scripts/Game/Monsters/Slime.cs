@@ -6,36 +6,25 @@ using UnityEngine;
 
 public sealed class Slime : BaseMonster
 {
-
-    public override void Awake()
+    protected override void InitializeMonster()
     {
         Health = MaxHealth = 100;
         Speed = 7;
-        ShieldGage = 10;
 
         Skill testSkill = new Skill(
             "테스트 스킬",
             "테스트 스킬이다.",
             cooldown: 5,
-            (me, target, cancel) =>
-            {
-                target.Health -= 35;
-                Debug.Log("펀치1");
-                Task.Delay(5000, cancel).Wait();
-                target.Health -= 50;
-                Debug.Log("펀치2");
-            });
+            PunchLogic);
 
         Skills = new Dictionary<string, Skill>
         {
             ["test-skill"] = testSkill
         };
-        base.Awake();
     }
 
-    protected override void InitializeOnStart()
+    private void Start()
     {
-        
         if (photonView.IsMine)
         {
             Punch(this, taskCancellation.Token);
@@ -47,4 +36,12 @@ public sealed class Slime : BaseMonster
         Task.Run(() => Skills["test-skill"].Use(this, target, cancellation));
     }
 
+    private void PunchLogic(BaseMonster me, BaseMonster target, CancellationToken cancellation)
+    {
+        target.HitPlayer(10, me);
+        Debug.Log("펀치1");
+        Task.Delay(5000, cancellation).Wait();
+        target.HitPlayer(100, me);
+        Debug.Log("펀치2");
+    }
 }

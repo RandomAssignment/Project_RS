@@ -133,12 +133,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ccbebe60f7ef5a46a9fa850bfa8d4fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 0
-  MaxHealth: 0
-  Speed: 0
-  ShieldGage: 0
-  JoysticPrefab: {fileID: 5736518031719809736, guid: cf9f2468d5b79f440903283af4fad60b,
+  PlayerUiPrefab: {fileID: 4993088276567271056, guid: 43efb47efcd30fc4196093e9c514ab07,
     type: 3}
+  _health: 0
+  _maxHealth: 0
+  _speed: 0
 --- !u!1 &4100068645431076839
 GameObject:
   m_ObjectHideFlags: 0

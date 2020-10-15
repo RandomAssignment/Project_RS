@@ -4,20 +4,18 @@ using UnityEngine;
 
 public class MainUIManager : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject[] UI_List;
-
+    public GameObject[] UI;
 
     public void ViewPanel(int type)
     {
-        UI_List[type].SetActive(true);
+        UI[type].SetActive(true);
     }
     public void ResetAndViewPanel(int type)
     {
-        for(int i = 0; i < UI_List.Length; i++)
+        for(int i = 0; i < UI.Length; i++)
         {
-            UI_List[i].SetActive(false);
+            UI[i].SetActive(false);
         }
-        UI_List[type].SetActive(true);
+        UI[type].SetActive(true);
     }
 }

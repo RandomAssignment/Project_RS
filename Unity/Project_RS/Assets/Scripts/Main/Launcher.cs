@@ -1,28 +1,26 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Photon.Pun;
+
 using UnityEngine;
-using UnityEngine.UI;
-using Photon.Pun;
 
 public class Launcher : MonoBehaviour
 {
-    string gameVersion = "1";
-    string ServerName = "";
+    private const string GameVersion = "1";
+    private string _serverName = "";
     public void Connect()
     {
         if (PhotonNetwork.IsConnected)
         {
-            PhotonNetwork.JoinRoom(ServerName);
+            PhotonNetwork.JoinRoom(_serverName);
         }
         else
         {
             PhotonNetwork.ConnectUsingSettings();
-            PhotonNetwork.GameVersion = gameVersion;
+            PhotonNetwork.GameVersion = GameVersion;
         }
     }
 
     public void SetServerName(string name)
     {
-        ServerName = name;
+        _serverName = name;
     }
 }
