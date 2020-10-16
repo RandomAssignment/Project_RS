@@ -6,16 +6,16 @@ using Photon.Pun;
 
 public class PlayerNameInputField : MonoBehaviour
 {
-    const string playerNamePrefKey = "PlayerName";
+    const string PlayerNamePrefKey = "PlayerName";
     void Start()
     {
         string defaultName = string.Empty;
         InputField _inputField = GetComponent<InputField>();
         if (_inputField != null)
         {
-            if (PlayerPrefs.HasKey(playerNamePrefKey))
+            if (PlayerPrefs.HasKey(PlayerNamePrefKey))
             {
-                defaultName = PlayerPrefs.GetString(playerNamePrefKey);
+                defaultName = PlayerPrefs.GetString(PlayerNamePrefKey);
                 _inputField.text = defaultName;
             }
         }
@@ -30,6 +30,6 @@ public class PlayerNameInputField : MonoBehaviour
             return;
         }
         PhotonNetwork.NickName = value;
-        PlayerPrefs.SetString(playerNamePrefKey, value);
+        PlayerPrefs.SetString(PlayerNamePrefKey, value);
     }
 }
