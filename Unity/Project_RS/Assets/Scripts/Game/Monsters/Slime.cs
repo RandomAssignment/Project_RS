@@ -25,10 +25,7 @@ public sealed class Slime : BaseMonster
 
     private void Start()
     {
-        if (photonView.IsMine)
-        {
-            Punch(this, taskCancellation.Token);
-        }
+        Punch(this, taskCancellation.Token);
     }
 
     public void Punch(BaseMonster target, CancellationToken cancellation)

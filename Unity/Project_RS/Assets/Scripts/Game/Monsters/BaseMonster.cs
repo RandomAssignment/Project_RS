@@ -98,7 +98,6 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
 
     private void OnDestroy()
     {
-        Debug.Log("실행중인 태스크 종료");
         taskCancellation.Cancel();
         taskCancellation.Dispose();
         taskCancellation = null;
@@ -142,7 +141,8 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
         if (Health == 0)
         {
             Debug.Log($"hp is 0.");
-            photonView.RPC(nameof(Dead), RpcTarget.All, attacker);
+            // RpcTarget.AllBuffered로 해야 다른 플레이어가 접속했을 때 자동으로 Dead RPC를 보내서 상대방 화면에서 죽음처리됨
+            photonView.RPC(nameof(Dead), RpcTarget.AllBuffered, attacker.photonView.ViewID);
             Debug.Log("RPC 보냄");
         }
     }
@@ -173,18 +173,32 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
     /// </summary>
     /// <param name="attacker">공격자</param>
     [PunRPC]
-    public void Dead(BaseMonster attacker)
+    public void Dead(int attackerViewID)
     {
         Debug.Log("Dead RPC executed");
+
+        // 씬 상의 플레이어들 중 공격자 ViewID와 동일한 오브젝트를 가져옴
+        BaseMonster attacker = null;
+        foreach (BaseMonster player in FindObjectsOfType<BaseMonster>())
+        {
+            if (player.photonView.ViewID == attackerViewID)
+            {
+                attacker = player;
+                break;
+            }
+        }
+
+        if (attacker == null)
+        {
+            Debug.Log("attackerViewID와 일치하는 플레이어를 찾지 못함");
+            return;
+        }
+
         Debug.Log($"attacker: {attacker.photonView.Owner.NickName}");
         gameObject.SetActive(false);
         _playerUI.SetActive(false);
         _isDead = true;
-
-        if (attacker != null)
-        {
-            GameManager.Instance.AddKillLog(attacker, this);
-        }
+        GameManager.Instance.AddKillLog(attacker, this);
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
