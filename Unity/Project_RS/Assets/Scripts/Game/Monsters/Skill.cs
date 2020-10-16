@@ -55,6 +55,10 @@ public class Skill
     /// <param name="setCool">true일 경우 스킬의 쿨타임이 생깁니다.</param>
     public void Use(BaseMonster attacker, BaseMonster target, CancellationToken cancellation, bool setCool = true)
     {
+        if (!attacker.photonView.IsMine)
+        {
+            return;
+        }
         if (Cooldown > 0)
         {
             return;
