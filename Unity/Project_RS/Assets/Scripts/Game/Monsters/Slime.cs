@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Collections;
+using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -11,34 +10,33 @@ public sealed class Slime : BaseMonster
         Health = MaxHealth = 100;
         Speed = 7;
 
-        Skill testSkill = new Skill(
-            "테스트 스킬",
-            "테스트 스킬이다.",
-            cooldown: 5,
-            PunchLogic);
+        Skill testSkill = new Skill(this, "펀치", "자기 자신을 때린다 ㅋㅋ", cooldown: 10, PunchLogic);
 
         Skills = new Dictionary<string, Skill>
         {
-            ["test-skill"] = testSkill
+            ["punch"] = testSkill
         };
+
     }
 
     private void Start()
     {
-        Punch(this, taskCancellation.Token);
+        Skills["punch"].Use();
+        StartCoroutine(SkillCheck());
     }
 
-    public void Punch(BaseMonster target, CancellationToken cancellation)
+    private IEnumerator PunchLogic()
     {
-        Task.Run(() => Skills["test-skill"].Use(this, target, cancellation));
-    }
-
-    private void PunchLogic(BaseMonster me, BaseMonster target, CancellationToken cancellation)
-    {
-        target.HitPlayer(10, me);
         Debug.Log("펀치1");
-        Task.Delay(5000, cancellation).Wait();
-        target.HitPlayer(100, me);
+        HitPlayer(10, attacker: this);
+        yield return new WaitForSeconds(4f);
         Debug.Log("펀치2");
+        HitPlayer(100, attacker: this);
+    }
+
+    private IEnumerator SkillCheck()
+    {
+        yield return new WaitForSeconds(12f);
+        Skills["punch"].Use();
     }
 }

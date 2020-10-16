@@ -94,6 +94,7 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
         _objRigidbody = gameObject.GetComponent<Rigidbody>();
         _monsterSpriteRenderer = transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
         taskCancellation = new CancellationTokenSource();
+        Debug.Log($"user name: {photonView.Controller.NickName}\nuser id: {photonView.Controller.UserId}");
     }
 
     private void OnDestroy()
@@ -142,7 +143,7 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
         {
             Debug.Log($"hp is 0.");
             // RpcTarget.AllBuffered로 해야 다른 플레이어가 접속했을 때 자동으로 Dead RPC를 보내서 상대방 화면에서 죽음처리됨
-            photonView.RPC(nameof(Dead), RpcTarget.AllBuffered, attacker.photonView.ViewID);
+            photonView.RPC(nameof(Dead), RpcTarget.All, attacker.photonView.ViewID);
             Debug.Log("RPC 보냄");
         }
     }
@@ -155,7 +156,7 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
                 0,
                 stickpos.y) * Time.deltaTime * Speed * 50;
 
-        photonView.RPC(nameof(FlipX), RpcTarget.AllBuffered, stickpos.x);
+        photonView.RPC(nameof(FlipX), RpcTarget.All, stickpos.x);
     }
 
     [PunRPC]
