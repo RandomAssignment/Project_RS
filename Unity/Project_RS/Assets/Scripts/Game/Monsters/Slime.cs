@@ -16,7 +16,6 @@ public sealed class Slime : BaseMonster
         {
             ["punch"] = testSkill
         };
-
     }
 
     private void Start()

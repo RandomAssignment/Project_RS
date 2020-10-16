@@ -57,8 +57,6 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
     /// </summary>
     public Dictionary<string, Skill> Skills { get; protected set; }
 
-    protected CancellationTokenSource taskCancellation;
-
     private GameObject _sceneCamera;
     private Vector3 _sceneCameraPos;
 
@@ -91,15 +89,7 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
         }
         _objRigidbody = gameObject.GetComponent<Rigidbody>();
         _monsterSpriteRenderer = transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
-        taskCancellation = new CancellationTokenSource();
         Debug.Log($"user name: {photonView.Controller.NickName}\nuser id: {photonView.Controller.UserId}");
-    }
-
-    private void OnDestroy()
-    {
-        taskCancellation.Cancel();
-        taskCancellation.Dispose();
-        taskCancellation = null;
     }
 
     public override void OnLeftRoom()
