@@ -171,7 +171,7 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
     {
         Debug.Log("Dead RPC executed");
 
-        // 씬 상의 플레이어들 중 공격자 ViewID와 동일한 오브젝트를 가져옴
+        // 씬 상의 플레이어들 중 공격자 UserId와 동일한 오브젝트를 가져옴
         BaseMonster attacker = null;
         foreach (BaseMonster player in FindObjectsOfType<BaseMonster>())
         {
