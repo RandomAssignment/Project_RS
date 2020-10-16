@@ -70,8 +70,6 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
 
     private GameObject _playerUI;
 
-    private bool _isDead;
-
     protected abstract void InitializeMonster();
 
     private void Awake()
@@ -132,18 +130,13 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
     /// <param name="attacker">공격자</param>
     public void HitPlayer(int damage, BaseMonster attacker)
     {
-        if (_isDead)
-        {
-            return;
-        }
-
         Health -= damage;
         Debug.Log($"damage: {damage}, attacker: {attacker.photonView.Owner.NickName}");
         if (Health == 0)
         {
             Debug.Log($"hp is 0.");
             // RpcTarget.AllBuffered로 해야 다른 플레이어가 접속했을 때 자동으로 Dead RPC를 보내서 상대방 화면에서 죽음처리됨
-            photonView.RPC(nameof(Dead), RpcTarget.All, attacker.photonView.ViewID);
+            photonView.RPC(nameof(Dead), RpcTarget.All, attacker.photonView.Controller.UserId);
             Debug.Log("RPC 보냄");
         }
     }
@@ -174,7 +167,7 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
     /// </summary>
     /// <param name="attacker">공격자</param>
     [PunRPC]
-    public void Dead(int attackerViewID)
+    public void Dead(string attackerUserID)
     {
         Debug.Log("Dead RPC executed");
 
@@ -182,7 +175,7 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
         BaseMonster attacker = null;
         foreach (BaseMonster player in FindObjectsOfType<BaseMonster>())
         {
-            if (player.photonView.ViewID == attackerViewID)
+            if (player.photonView.Controller.UserId == attackerUserID)
             {
                 attacker = player;
                 break;
@@ -191,14 +184,13 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
 
         if (attacker == null)
         {
-            Debug.Log("attackerViewID와 일치하는 플레이어를 찾지 못함");
+            Debug.Log("attacker의 UserId와 일치하는 플레이어를 찾지 못함");
             return;
         }
 
         Debug.Log($"attacker: {attacker.photonView.Owner.NickName}");
         gameObject.SetActive(false);
         _playerUI.SetActive(false);
-        _isDead = true;
         GameManager.Instance.AddKillLog(attacker, this);
     }
 
@@ -210,7 +202,6 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
             stream.SendNext(_health);
             stream.SendNext(_maxHealth);
             stream.SendNext(_speed);
-            stream.SendNext(_isDead);
         }
         else
         {
@@ -218,7 +209,6 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
             _health = (int)stream.ReceiveNext();
             _maxHealth = (int)stream.ReceiveNext();
             _speed = (float)stream.ReceiveNext();
-            _isDead = (bool)stream.ReceiveNext();
         }
     }
 }
