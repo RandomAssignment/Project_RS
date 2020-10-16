@@ -155,7 +155,7 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
     /// <summary>
     /// 플레이어가 죽었을 때 실행
     /// </summary>
-    /// <param name="attacker">공격자</param>
+    /// <param name="attackerUserID">공격자의 PhotonPlayer.UserId</param>
     [PunRPC]
     public void Dead(string attackerUserID)
     {
