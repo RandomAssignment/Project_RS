@@ -2,7 +2,7 @@
 # editorconfig.org
 
 # top-most EditorConfig file
-# root = true
+root = true
 
 # Default settings:
 # A newline ending every file

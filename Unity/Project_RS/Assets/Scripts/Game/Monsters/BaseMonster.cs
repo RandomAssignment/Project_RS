@@ -57,8 +57,6 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
     /// </summary>
     public Dictionary<string, Skill> Skills { get; protected set; }
 
-    protected CancellationTokenSource taskCancellation;
-
     private GameObject _sceneCamera;
     private Vector3 _sceneCameraPos;
 
@@ -69,8 +67,6 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
     private SpriteRenderer _monsterSpriteRenderer;
 
     private GameObject _playerUI;
-
-    private bool _isDead;
 
     protected abstract void InitializeMonster();
 
@@ -93,14 +89,7 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
         }
         _objRigidbody = gameObject.GetComponent<Rigidbody>();
         _monsterSpriteRenderer = transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
-        taskCancellation = new CancellationTokenSource();
-    }
-
-    private void OnDestroy()
-    {
-        taskCancellation.Cancel();
-        taskCancellation.Dispose();
-        taskCancellation = null;
+        Debug.Log($"user name: {photonView.Controller.NickName}\nuser id: {photonView.Controller.UserId}");
     }
 
     public override void OnLeftRoom()
@@ -131,18 +120,13 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
     /// <param name="attacker">공격자</param>
     public void HitPlayer(int damage, BaseMonster attacker)
     {
-        if (_isDead)
-        {
-            return;
-        }
-
         Health -= damage;
         Debug.Log($"damage: {damage}, attacker: {attacker.photonView.Owner.NickName}");
         if (Health == 0)
         {
             Debug.Log($"hp is 0.");
             // RpcTarget.AllBuffered로 해야 다른 플레이어가 접속했을 때 자동으로 Dead RPC를 보내서 상대방 화면에서 죽음처리됨
-            photonView.RPC(nameof(Dead), RpcTarget.AllBuffered, attacker.photonView.ViewID);
+            photonView.RPC(nameof(Dead), RpcTarget.All, attacker.photonView.Controller.UserId);
             Debug.Log("RPC 보냄");
         }
     }
@@ -155,7 +139,7 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
                 0,
                 stickpos.y) * Time.deltaTime * Speed * 50;
 
-        photonView.RPC(nameof(FlipX), RpcTarget.AllBuffered, stickpos.x);
+        photonView.RPC(nameof(FlipX), RpcTarget.All, stickpos.x);
     }
 
     [PunRPC]
@@ -171,17 +155,17 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
     /// <summary>
     /// 플레이어가 죽었을 때 실행
     /// </summary>
-    /// <param name="attacker">공격자</param>
+    /// <param name="attackerUserID">공격자의 PhotonPlayer.UserId</param>
     [PunRPC]
-    public void Dead(int attackerViewID)
+    public void Dead(string attackerUserID)
     {
         Debug.Log("Dead RPC executed");
 
-        // 씬 상의 플레이어들 중 공격자 ViewID와 동일한 오브젝트를 가져옴
+        // 씬 상의 플레이어들 중 공격자 UserId와 동일한 오브젝트를 가져옴
         BaseMonster attacker = null;
         foreach (BaseMonster player in FindObjectsOfType<BaseMonster>())
         {
-            if (player.photonView.ViewID == attackerViewID)
+            if (player.photonView.Controller.UserId == attackerUserID)
             {
                 attacker = player;
                 break;
@@ -190,14 +174,13 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
 
         if (attacker == null)
         {
-            Debug.Log("attackerViewID와 일치하는 플레이어를 찾지 못함");
+            Debug.Log("attacker의 UserId와 일치하는 플레이어를 찾지 못함");
             return;
         }
 
         Debug.Log($"attacker: {attacker.photonView.Owner.NickName}");
         gameObject.SetActive(false);
         _playerUI.SetActive(false);
-        _isDead = true;
         GameManager.Instance.AddKillLog(attacker, this);
     }
 
@@ -209,7 +192,6 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
             stream.SendNext(_health);
             stream.SendNext(_maxHealth);
             stream.SendNext(_speed);
-            stream.SendNext(_isDead);
         }
         else
         {
@@ -217,7 +199,6 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
             _health = (int)stream.ReceiveNext();
             _maxHealth = (int)stream.ReceiveNext();
             _speed = (float)stream.ReceiveNext();
-            _isDead = (bool)stream.ReceiveNext();
         }
     }
 }
