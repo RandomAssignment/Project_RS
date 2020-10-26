@@ -32,7 +32,9 @@ public class MainScene : MonoBehaviourPunCallbacks
 
         // 메인화면에서 몬스터 선택 가능
         // type 값은 Resources에 있는 프리팹 이름 사용하기
-        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { ["type"] = "Slime" });
+        string[] testCharacters = { "Slime", "Dummy1", "Dummy2" };
+        string t = testCharacters[Random.Range(0, 3)];
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { ["type"] = t });
         PhotonNetwork.GameVersion = GameVersion;
         PhotonNetwork.ConnectUsingSettings();
     }
