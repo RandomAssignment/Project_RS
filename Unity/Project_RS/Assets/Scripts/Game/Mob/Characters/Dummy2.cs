@@ -7,7 +7,7 @@ public sealed class Dummy2 : Character
 {
     protected override void InitializeMob()
     {
-        MobName = "Dummy1";
+        MobName = "Dummy2";
         Health = MaxHealth = 100;
         Speed = 7;
 
