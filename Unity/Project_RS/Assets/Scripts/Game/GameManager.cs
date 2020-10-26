@@ -6,14 +6,17 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
-    public static GameManager Instance;
+    #region Unity Field
+    [SerializeField]
+    private BaseMob _playerPrefab;
+    #endregion
 
-    public BaseMonster PlayerPrefab;
+    public static GameManager Instance;
 
     private void Start()
     {
         Instance = this;
-        if (PlayerPrefab == null)
+        if (_playerPrefab == null)
         {
             Debug.LogError("플레이어 프리팹이 설정되어있지 않음. GameManager에서 설정하셈");
             return;
@@ -38,7 +41,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         base.OnPlayerLeftRoom(otherPlayer);
     }
 
-    public void AddKillLog(BaseMonster killer, BaseMonster target)
+    public void AddKillLog(BaseMob killer, BaseMob target)
     {
         Debug.Log($"Kill: {killer.photonView.Owner.NickName} -> {target.photonView.Owner.NickName}");
         // 데이터 추가 작업 필요

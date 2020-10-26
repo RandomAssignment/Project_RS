@@ -1,13 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Photon.Pun;
+
 using UnityEngine;
 using UnityEngine.UI;
-using Photon.Pun;
 
 public class PlayerNameInputField : MonoBehaviour
 {
-    const string PlayerNamePrefKey = "PlayerName";
-    void Start()
+    private const string PlayerNamePrefKey = "PlayerName";
+
+    private void Start()
     {
         string defaultName = string.Empty;
         InputField _inputField = GetComponent<InputField>();
@@ -21,6 +21,7 @@ public class PlayerNameInputField : MonoBehaviour
         }
         PhotonNetwork.NickName = defaultName;
     }
+
     public void SetPlayerName(string value)
     {
         // #Important

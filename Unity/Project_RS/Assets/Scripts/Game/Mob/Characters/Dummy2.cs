@@ -3,10 +3,11 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-public sealed class Slime : BaseMonster
+public sealed class Dummy2 : Character
 {
-    protected override void InitializeMonster()
+    protected override void InitializeMob()
     {
+        MobName = "Dummy2";
         Health = MaxHealth = 100;
         Speed = 7;
 
@@ -30,7 +31,7 @@ public sealed class Slime : BaseMonster
         HitPlayer(10, attacker: this);
         yield return new WaitForSeconds(4f);
         Debug.Log("펀치2");
-        HitPlayer(100, attacker: this);
+        HitPlayer(1, attacker: this);
     }
 
     private IEnumerator SkillCheck()

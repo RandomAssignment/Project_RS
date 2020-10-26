@@ -3,24 +3,29 @@ using UnityEngine.UI;
 
 public class PlayerUI : MonoBehaviour
 {
-    public Text PlayerNameText;
-    public Image HealthBarImage;
-    public Vector3 ScreenOffset = new Vector3(0f, 30f, 0f);
+    #region Unity Field
+    [SerializeField]
+    private Text _playerNameText;
+    [SerializeField]
+    private Image _healthBarImage;
+    [SerializeField]
+    private Vector3 _screenOffset = new Vector3(0f, 30f, 0f);
+    #endregion
 
-    private BaseMonster _target;
+    private BaseMob _target;
 
     private void Awake()
     {
         transform.SetParent(GameObject.FindGameObjectWithTag("Canvas").transform, false);
     }
 
-    public void SetTarget(BaseMonster target)
+    public void SetTarget(BaseMob target)
     {
         _target = target;
 
-        if (PlayerNameText != null)
+        if (_playerNameText != null)
         {
-            PlayerNameText.text = target.photonView.Owner.NickName;
+            _playerNameText.text = target.photonView.Owner.NickName;
         }
     }
 
@@ -32,14 +37,14 @@ public class PlayerUI : MonoBehaviour
             return;
         }
 
-        HealthBarImage.fillAmount = (float)_target.Health / _target.MaxHealth;
+        _healthBarImage.fillAmount = (float)_target.Health / _target.MaxHealth;
     }
 
     private void LateUpdate()
     {
         if (_target != null)
         {
-            transform.position = Camera.main.WorldToScreenPoint(_target.transform.position) + ScreenOffset;
+            transform.position = Camera.main.WorldToScreenPoint(_target.transform.position) + _screenOffset;
         }
     }
 }

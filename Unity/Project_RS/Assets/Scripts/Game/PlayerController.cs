@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 public class PlayerController : MonoBehaviour, IDragHandler, IEndDragHandler
 {
     public RectTransform Stick { get; private set; }
-    private BaseMonster _target;
+    private BaseMob _target;
 
     public void OnDrag(PointerEventData eventData)
     {
@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour, IDragHandler, IEndDragHandler
         Stick.localPosition = Vector3.zero;
     }
 
-    public void SetTarget(BaseMonster target)
+    public void SetTarget(BaseMob target)
     {
         _target = target;
     }

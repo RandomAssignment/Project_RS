@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 4100068644474272606}
   - component: {fileID: 7425006531284731820}
   - component: {fileID: 7440283654042006887}
-  - component: {fileID: 4100068644474272604}
+  - component: {fileID: 5475191112953428120}
   m_Layer: 0
-  m_Name: Slime
+  m_Name: Dummy1
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -86,7 +86,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 7425006531284731820}
   - {fileID: 7440283654042006887}
-  - {fileID: 4100068644474272604}
+  - {fileID: 5475191112953428120}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -121,7 +121,7 @@ MonoBehaviour:
   m_SynchronizeAngularVelocity: 1
   m_TeleportEnabled: 0
   m_TeleportIfDistanceGreaterThan: 3
---- !u!114 &4100068644474272604
+--- !u!114 &5475191112953428120
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -130,7 +130,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4100068644474272605}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ccbebe60f7ef5a46a9fa850bfa8d4fc, type: 3}
+  m_Script: {fileID: 11500000, guid: 33410aa92b6cf0240a51762bdfb109d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _playerUiPrefab: {fileID: 4993088276567271056, guid: 43efb47efcd30fc4196093e9c514ab07,
@@ -148,7 +148,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4100068645431076838}
   - component: {fileID: 4100068645431076840}
-  - component: {fileID: 1490681504304414038}
+  - component: {fileID: 655619478112017676}
   m_Layer: 0
   m_Name: hello
   m_TagString: Untagged
@@ -209,7 +209,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 295408d34da154c48b937b30ff2723c5, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 42fa508db387aba49ae206b5a4491f6e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -220,7 +220,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1490681504304414038
+--- !u!114 &655619478112017676
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

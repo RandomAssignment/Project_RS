@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
-using System.Threading;
 
 using Photon.Pun;
 
 using UnityEngine;
 
-public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
+public abstract class BaseMob : MonoBehaviourPunCallbacks, IPunObservable
 {
-    #region Unity Property
-
-    public GameObject PlayerUiPrefab;
+    #region Unity Field
+    [SerializeField]
+    private GameObject _playerUiPrefab;
 
     [SerializeField]
     [Tooltip("현재 체력")]
@@ -22,7 +21,6 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField]
     [Tooltip("현재 스피드")]
     private float _speed;
-
     #endregion
 
     /// <summary>
@@ -53,6 +51,12 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     /// <summary>
+    /// 해당 개체의 이름
+    /// </summary>
+    public string MobName { get; protected set; }
+
+
+    /// <summary>
     /// 스킬 목록 [skill-id, skill-instance]
     /// </summary>
     public Dictionary<string, Skill> Skills { get; protected set; }
@@ -68,18 +72,18 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
 
     private GameObject _playerUI;
 
-    protected abstract void InitializeMonster();
+    protected abstract void InitializeMob();
 
     private void Awake()
     {
-        InitializeMonster();
+        InitializeMob();
 
         _sceneCamera = GameObject.FindGameObjectWithTag("MainCamera");
         _sceneCameraPos = transform.position + _sceneCamera.transform.position;
 
-        if (PlayerUiPrefab != null)
+        if (_playerUiPrefab != null)
         {
-            _playerUI = Instantiate(PlayerUiPrefab);
+            _playerUI = Instantiate(_playerUiPrefab);
             _playerUI.GetComponent<PlayerUI>().SetTarget(this);
         }
 
@@ -118,7 +122,7 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
     /// </summary>
     /// <param name="damage">주는 데미지</param>
     /// <param name="attacker">공격자</param>
-    public void HitPlayer(int damage, BaseMonster attacker)
+    public void HitPlayer(int damage, BaseMob attacker)
     {
         Health -= damage;
         Debug.Log($"damage: {damage}, attacker: {attacker.photonView.Owner.NickName}");
@@ -162,8 +166,8 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
         Debug.Log("Dead RPC executed");
 
         // 씬 상의 플레이어들 중 공격자 UserId와 동일한 오브젝트를 가져옴
-        BaseMonster attacker = null;
-        foreach (BaseMonster player in FindObjectsOfType<BaseMonster>())
+        BaseMob attacker = null;
+        foreach (BaseMob player in FindObjectsOfType<BaseMob>())
         {
             if (player.photonView.Controller.UserId == attackerUserID)
             {

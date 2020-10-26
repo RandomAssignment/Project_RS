@@ -203,9 +203,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afd2b6024cc7e1349a15d84a748ce9f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerNameText: {fileID: 7954632464549242487}
-  HealthBarImage: {fileID: 870632363191831185}
-  ScreenOffset: {x: 0, y: 100, z: 0}
+  _playerNameText: {fileID: 7954632464549242487}
+  _healthBarImage: {fileID: 870632363191831185}
+  _screenOffset: {x: 0, y: 70, z: 0}
 --- !u!1 &7543707833465463106
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,21 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MainUIManager : MonoBehaviour
 {
-    public GameObject[] UI;
+    #region Unity Field
+    [SerializeField]
+    private GameObject[] _ui;
+    #endregion
 
     public void ViewPanel(int type)
     {
-        UI[type].SetActive(true);
+        _ui[type].SetActive(true);
     }
     public void ResetAndViewPanel(int type)
     {
-        for(int i = 0; i < UI.Length; i++)
+        for (int i = 0; i < _ui.Length; i++)
         {
-            UI[i].SetActive(false);
+            _ui[i].SetActive(false);
         }
-        UI[type].SetActive(true);
+        _ui[type].SetActive(true);
     }
 }
