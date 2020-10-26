@@ -31,7 +31,7 @@ public class Skill
     public bool IsCooldown => Cooldown > 0;
 
     private readonly Func<IEnumerator> _logic;
-    private readonly BaseMonster _attacker;
+    private readonly BaseMob _attacker;
 
     private Coroutine _executeCoroutine = null;
 
@@ -43,7 +43,7 @@ public class Skill
     /// <param name="desc">스킬 설명</param>
     /// <param name="cooldown">스킬 쿨타임</param>
     /// <param name="logic">코루틴으로 실행되는 스킬의 로직을 설정합니다.</param>
-    public Skill(BaseMonster attacker, string name, string desc, int cooldown, Func<IEnumerator> logic)
+    public Skill(BaseMob attacker, string name, string desc, int cooldown, Func<IEnumerator> logic)
     {
         Name = name;
         Description = desc;

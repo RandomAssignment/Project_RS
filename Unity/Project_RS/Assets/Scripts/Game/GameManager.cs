@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 {
     #region Unity Field
     [SerializeField]
-    private BaseMonster _playerPrefab;
+    private BaseMob _playerPrefab;
     #endregion
 
     public static GameManager Instance;
@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         base.OnPlayerLeftRoom(otherPlayer);
     }
 
-    public void AddKillLog(BaseMonster killer, BaseMonster target)
+    public void AddKillLog(BaseMob killer, BaseMob target)
     {
         Debug.Log($"Kill: {killer.photonView.Owner.NickName} -> {target.photonView.Owner.NickName}");
         // 데이터 추가 작업 필요
