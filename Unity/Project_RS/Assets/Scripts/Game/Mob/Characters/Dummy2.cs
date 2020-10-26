@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-public sealed class Slime : Character
+public sealed class Dummy2 : Character
 {
     protected override void InitializeMob()
     {
-        MobName = "Slime";
+        MobName = "Dummy1";
         Health = MaxHealth = 100;
         Speed = 7;
 
