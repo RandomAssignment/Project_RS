@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading;
 
 using Photon.Pun;
 
@@ -7,9 +6,9 @@ using UnityEngine;
 
 public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
 {
-    #region Unity Property
-
-    public GameObject PlayerUiPrefab;
+    #region Unity Field
+    [SerializeField]
+    private GameObject _playerUiPrefab;
 
     [SerializeField]
     [Tooltip("현재 체력")]
@@ -22,7 +21,6 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField]
     [Tooltip("현재 스피드")]
     private float _speed;
-
     #endregion
 
     /// <summary>
@@ -77,9 +75,9 @@ public abstract class BaseMonster : MonoBehaviourPunCallbacks, IPunObservable
         _sceneCamera = GameObject.FindGameObjectWithTag("MainCamera");
         _sceneCameraPos = transform.position + _sceneCamera.transform.position;
 
-        if (PlayerUiPrefab != null)
+        if (_playerUiPrefab != null)
         {
-            _playerUI = Instantiate(PlayerUiPrefab);
+            _playerUI = Instantiate(_playerUiPrefab);
             _playerUI.GetComponent<PlayerUI>().SetTarget(this);
         }
 

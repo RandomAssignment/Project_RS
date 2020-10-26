@@ -6,14 +6,17 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
-    public static GameManager Instance;
+    #region Unity Field
+    [SerializeField]
+    private BaseMonster _playerPrefab;
+    #endregion
 
-    public BaseMonster PlayerPrefab;
+    public static GameManager Instance;
 
     private void Start()
     {
         Instance = this;
-        if (PlayerPrefab == null)
+        if (_playerPrefab == null)
         {
             Debug.LogError("플레이어 프리팹이 설정되어있지 않음. GameManager에서 설정하셈");
             return;

@@ -5,7 +5,10 @@ using UnityEngine;
 
 public class MainScene : MonoBehaviourPunCallbacks
 {
-    public byte MaxPlayersPerRoom = 5;
+    #region Unity Field
+    [SerializeField]
+    private byte _maxPlayersPerRoom = 5;
+    #endregion
 
     private const string GameVersion = "1";
     private bool _isConnecting;
@@ -46,7 +49,7 @@ public class MainScene : MonoBehaviourPunCallbacks
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
         Debug.Log("랜덤 방 참여 실패. 새로운 방을 만듭니다.");
-        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = MaxPlayersPerRoom, PublishUserId = true });
+        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = _maxPlayersPerRoom, PublishUserId = true });
     }
 
     public override void OnJoinedRoom()
