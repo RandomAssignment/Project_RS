@@ -51,7 +51,19 @@ public class MainScene : MonoBehaviourPunCallbacks
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
         Debug.Log("랜덤 방 참여 실패. 새로운 방을 만듭니다.");
-        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = _maxPlayersPerRoom, PublishUserId = true });
+
+        RoomOptions option = new RoomOptions
+        {
+            MaxPlayers = _maxPlayersPerRoom,
+            PublishUserId = true,
+            CustomRoomProperties = new ExitGames.Client.Photon.Hashtable()
+        };
+        for (int i = 0; i < option.MaxPlayers; i++)
+        {
+            option.CustomRoomProperties.Add($"spawn{i}", false);
+        }
+
+        PhotonNetwork.CreateRoom(null, option);
     }
 
     public override void OnJoinedRoom()
