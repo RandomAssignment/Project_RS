@@ -20,11 +20,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     private void Start()
     {
         Instance = this;
-        if (_playerPrefab == null)
-        {
-            Debug.LogError("플레이어 프리팹이 설정되어있지 않음. GameManager에서 설정하셈");
-            return;
-        }
+        Debug.Assert(_playerPrefab == null, "플레이어 프리팹이 설정되어있지 않음");
         string playerType = (string)PhotonNetwork.LocalPlayer.CustomProperties["type"];
         Debug.Log($"Player {PhotonNetwork.NickName} : type : {playerType}");
 
@@ -66,7 +62,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         if (n < 0 || n >= _spawnPositions.Length || _spawnPositions[n] == null)
         {
-            Debug.Assert(false, $"_spawnPositions array 요소의 갯수가 부족하거나 비어있음");
+            Debug.Assert(true, $"_spawnPositions array 요소의 갯수가 부족하거나 비어있음");
         }
 
         // 해당 플레이어가 스폰할 지점의 값을 true로 바꿔서 다른 플레이어가 스폰하지 못하도록 하기
