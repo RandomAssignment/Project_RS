@@ -137,11 +137,17 @@ public abstract class BaseMob : MonoBehaviourPunCallbacks, IPunObservable
 
     public void Move(Vector3 stickpos)
     {
-        _objRigidbody.velocity =
+        //_objRigidbody.velocity =
+        //    new Vector3(
+        //        stickpos.x,
+        //        0,
+        //        stickpos.y) * Time.deltaTime * Speed * 50;
+
+        _objRigidbody.transform.Translate(
             new Vector3(
                 stickpos.x,
                 0,
-                stickpos.y) * Time.deltaTime * Speed * 50;
+                stickpos.y) * Time.deltaTime * Speed);
 
         photonView.RPC(nameof(FlipX), RpcTarget.All, stickpos.x);
     }
