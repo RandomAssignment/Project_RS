@@ -3,11 +3,13 @@ using Photon.Realtime;
 
 using UnityEngine;
 
+using Hashtable = ExitGames.Client.Photon.Hashtable;
+
 public class MainScene : MonoBehaviourPunCallbacks
 {
     #region Unity Field
     [SerializeField]
-    private byte _maxPlayersPerRoom = 5;
+    private byte _maxPlayersPerRoom = 8;
     #endregion
 
     private const string GameVersion = "1";
@@ -34,7 +36,7 @@ public class MainScene : MonoBehaviourPunCallbacks
         // type 값은 Resources에 있는 프리팹 이름 사용하기
         string[] testCharacters = { "Slime", "Dummy1", "Dummy2" };
         string t = testCharacters[Random.Range(0, 3)];
-        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { ["type"] = t });
+        PhotonNetwork.LocalPlayer.CustomProperties = new Hashtable { ["type"] = t };
         PhotonNetwork.GameVersion = GameVersion;
         PhotonNetwork.ConnectUsingSettings();
     }
@@ -56,8 +58,9 @@ public class MainScene : MonoBehaviourPunCallbacks
         {
             MaxPlayers = _maxPlayersPerRoom,
             PublishUserId = true,
-            CustomRoomProperties = new ExitGames.Client.Photon.Hashtable()
+            CustomRoomProperties = new Hashtable()
         };
+
         for (int i = 0; i < option.MaxPlayers; i++)
         {
             option.CustomRoomProperties.Add($"spawn{i}", false);

@@ -149,7 +149,10 @@ public abstract class BaseMob : MonoBehaviourPunCallbacks, IPunObservable
                 0,
                 stickpos.y) * Time.deltaTime * Speed);
 
-        photonView.RPC(nameof(FlipX), RpcTarget.All, stickpos.x);
+        if (PhotonNetwork.InRoom)
+        {
+            photonView.RPC(nameof(FlipX), RpcTarget.All, stickpos.x);
+        }
     }
 
     [PunRPC]

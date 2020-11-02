@@ -1,9 +1,10 @@
-﻿
-using Photon.Pun;
+﻿using Photon.Pun;
 using Photon.Realtime;
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
@@ -37,6 +38,18 @@ public class GameManager : MonoBehaviourPunCallbacks
         Debug.Log($"{PhotonNetwork.MasterClient.NickName}가 이 방의 방장입니다.");
     }
 
+    public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
+    {
+        for (int i = 0; i < PhotonNetwork.CurrentRoom.MaxPlayers; i++)
+        {
+            if (!propertiesThatChanged.TryGetValue($"spawn{i}", out object check))
+            {
+                continue;
+            }
+            print($"{i}: {(bool)check}");
+        }
+    }
+
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         base.OnPlayerLeftRoom(otherPlayer);
@@ -52,24 +65,37 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         byte max = PhotonNetwork.CurrentRoom.MaxPlayers;
 
-        System.Random randomize = new System.Random();
-        int n;
+        Hashtable cp = PhotonNetwork.CurrentRoom.CustomProperties;
         // 아직 플레이어가 스폰되지 않은 지역 중 랜덤으로 찾기
-        do
-        {
-            n = randomize.Next(max);
-        } while ((bool)PhotonNetwork.CurrentRoom.CustomProperties[$"spawn{n}"]);
 
-        if (n < 0 || n >= _spawnPositions.Length || _spawnPositions[n] == null)
+        int n = -1;
+        for (int i = 0; i < max; i++)
         {
-            Debug.Assert(false, $"_spawnPositions array 요소의 갯수가 부족하거나 비어있음");
+            int tmp = Random.Range(0, max);
+            if (!(bool)cp[$"spawn{tmp}"])
+            {
+                n = tmp;
+                break;
+            }
         }
 
+        #region 게임의 방향과 다른 코드지만 테스트용
+        // NOTE: 이 코드는 나중에 인원관련해서 구현을 완료했을 때 제거해도 됨
+        if (n == -1)
+        {
+            print("스폰할 수 있는 지점이 없어서 방을 나갑니다.");
+            LeaveRoom();
+            return;
+        }
+        #endregion
+
         // 해당 플레이어가 스폰할 지점의 값을 true로 바꿔서 다른 플레이어가 스폰하지 못하도록 하기
-        PhotonNetwork.CurrentRoom.CustomProperties[$"spawn{n}"] = true;
+        cp[$"spawn{n}"] = true;
+        PhotonNetwork.CurrentRoom.SetCustomProperties(cp);
 
         Vector3 pos = _spawnPositions[n];
         PhotonNetwork.Instantiate(type, pos, Quaternion.identity, 0);
+
         Debug.Log($"Spawned position: {n}");
     }
 }

@@ -34,7 +34,10 @@ public class PlayerController : MonoBehaviour, IDragHandler, IEndDragHandler
 
     private void FixedUpdate()
     {
-        _target.Move(Stick.localPosition.normalized);
+        if (_target != null)
+        {
+            _target.Move(Stick.localPosition.normalized);
+        }
     }
 
     private void Update()

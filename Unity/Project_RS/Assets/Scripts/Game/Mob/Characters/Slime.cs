@@ -19,11 +19,10 @@ public sealed class Slime : Character
         };
     }
 
-    private void Start()
-    {
-        Skills["punch"].Use();
-        StartCoroutine(SkillCheck());
-    }
+    //private void Start()
+    //{
+    //    Skills["punch"].Use();
+    //}
 
     private IEnumerator PunchLogic()
     {
@@ -32,11 +31,5 @@ public sealed class Slime : Character
         yield return new WaitForSeconds(4f);
         Debug.Log("펀치2");
         HitPlayer(1, attacker: this);
-    }
-
-    private IEnumerator SkillCheck()
-    {
-        yield return new WaitForSeconds(12f);
-        Skills["punch"].Use();
     }
 }
