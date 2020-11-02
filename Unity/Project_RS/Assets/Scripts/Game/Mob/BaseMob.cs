@@ -79,7 +79,7 @@ public abstract class BaseMob : MonoBehaviourPunCallbacks, IPunObservable
         InitializeMob();
 
         _sceneCamera = GameObject.FindGameObjectWithTag("MainCamera");
-        _sceneCameraPos = transform.position + _sceneCamera.transform.position;
+        _sceneCameraPos = _sceneCamera.transform.position;
 
         if (_playerUiPrefab != null)
         {
