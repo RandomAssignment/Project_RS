@@ -16,11 +16,15 @@ public class GameManager : MonoBehaviourPunCallbacks
     private Vector3[] _spawnPositions = new Vector3[8];
     #endregion
 
-    public static GameManager Instance;
+    public static GameManager Instance { get; private set; }
 
     private void Start()
     {
-        Instance = this;
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+
         Debug.Assert(_playerPrefab != null, "플레이어 프리팹이 설정되어있지 않음");
         string playerType = (string)PhotonNetwork.LocalPlayer.CustomProperties["type"];
         Debug.Log($"Player {PhotonNetwork.NickName} : type : {playerType}");
