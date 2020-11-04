@@ -26,6 +26,12 @@ public class Skill
     public int Cooldown { get; set; }
 
     /// <summary>
+    /// 스킬의 방향
+    /// </summary>
+
+    public Vector3 _skillDirection;
+
+    /// <summary>
     /// 스킬이 현재 쿨타임인지를 반환
     /// </summary>
     public bool IsCooldown => Cooldown > 0;
@@ -58,8 +64,9 @@ public class Skill
     /// </summary>
     /// <param name="target">스킬을 맞는 대상</param>
     /// <param name="setCool">true일 경우 스킬의 쿨타임이 생깁니다.</param>
-    public void Use()
+    public void Use(Vector3 direction)
     {
+        _skillDirection = direction;
         if (!_attacker.photonView.IsMine || IsCooldown)
         {
             return;

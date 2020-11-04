@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using UnityEngine;
+using Photon.Pun;
 
 public sealed class Dummy1 : Character
 {
@@ -19,17 +20,31 @@ public sealed class Dummy1 : Character
         };
     }
 
-    //private void Start()
-    //{
-    //    Skills["punch"].Use();
-    //}
+
+    private GameObject[] _skillObjectList = new GameObject[3];
+    private void Start()
+    {
+        for (int i = 0; i < transform.GetChild(1).childCount; i++)
+            _skillObjectList[i] = transform.GetChild(1).GetChild(i).gameObject;
+    }
 
     private IEnumerator PunchLogic()
     {
-        Debug.Log("펀치1");
-        HitPlayer(10, attacker: this);
-        yield return new WaitForSeconds(4f);
-        Debug.Log("펀치2");
-        HitPlayer(1, attacker: this);
+        photonView.RPC("PunchOnRPC", RpcTarget.All, Skills["punch"]._skillDirection.x, Skills["punch"]._skillDirection.y);
+        yield return new WaitForSeconds(0.2f);
+        photonView.RPC("PunchOffRPC", RpcTarget.All);
+    }
+
+    [PunRPC]
+    private void PunchOnRPC(float x, float y)
+    {
+        _skillObjectList[0].SetActive(true);
+        _skillObjectList[0].transform.localPosition = new Vector3(x, 0, y);
+    }
+
+    [PunRPC]
+    private void PunchOffRPC()
+    {
+        _skillObjectList[0].SetActive(false);
     }
 }

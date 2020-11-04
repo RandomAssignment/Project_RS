@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         string playerType = (string)PhotonNetwork.LocalPlayer.CustomProperties["type"];
         Debug.Log($"Player {PhotonNetwork.NickName} : type : {playerType}");
 
-        RandomSpawnPlayer(playerType);
+        RandomSpawnPlayer("Prefabs/Character/" + playerType);
     }
 
     public void LeaveRoom() => PhotonNetwork.LeaveRoom();
