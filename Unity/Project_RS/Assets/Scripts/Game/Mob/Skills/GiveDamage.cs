@@ -13,6 +13,7 @@ public class GiveDamage : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        other.gameObject.GetComponent<BaseMob>().HitPlayer(Damage, attacker);
+        if(other.gameObject.CompareTag("Player") && other.gameObject != transform.root.gameObject)
+            other.gameObject.GetComponent<BaseMob>().HitPlayer(Damage, attacker);
     }
 }

@@ -90,6 +90,7 @@ public abstract class BaseMob : MonoBehaviourPunCallbacks, IPunObservable
         if (photonView.IsMine)
         {
             GameObject.FindGameObjectWithTag("GameController").GetComponent<PlayerController>().SetTarget(this);
+            GameObject.FindGameObjectWithTag("SkillController").GetComponent<SkillController>().SetTarget(this);
         }
         _objRigidbody = gameObject.GetComponent<Rigidbody>();
         _monsterSpriteRenderer = transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
