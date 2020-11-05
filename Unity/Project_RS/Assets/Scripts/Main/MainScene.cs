@@ -1,4 +1,6 @@
-﻿using Photon.Pun;
+﻿using System.Linq;
+
+using Photon.Pun;
 using Photon.Realtime;
 
 using UnityEngine;
@@ -71,6 +73,8 @@ public class MainScene : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
+        PhotonNetwork.NickName = $"{PhotonNetwork.NickName}@{PhotonNetwork.LocalPlayer.UserId.Substring(0, 5)}";
+
         PhotonNetwork.LoadLevel("Prototype");
     }
 

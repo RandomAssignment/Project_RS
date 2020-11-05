@@ -34,7 +34,10 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public void LeaveRoom() => PhotonNetwork.LeaveRoom();
 
-    public override void OnLeftRoom() => SceneManager.LoadScene("MainScene");
+    public override void OnLeftRoom()
+    {
+        SceneManager.LoadScene("MainScene");
+    }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
@@ -75,7 +78,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         int n = -1;
         for (int i = 0; i < max; i++)
         {
-            int tmp = Random.Range(0, max);
+            int tmp = UnityEngine.Random.Range(0, max);
             if (!(bool)cp[$"spawn{tmp}"])
             {
                 n = tmp;
