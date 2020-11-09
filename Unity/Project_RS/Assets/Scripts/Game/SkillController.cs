@@ -44,7 +44,7 @@ public class SkillController : MonoBehaviour, IDragHandler, IEndDragHandler
     {
         if (_target != null)
         {
-            
+
         }
     }
 

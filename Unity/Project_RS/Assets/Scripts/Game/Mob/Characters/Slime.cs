@@ -1,8 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-
-using UnityEngine;
 using Photon.Pun;
+using UnityEngine;
 
 public sealed class Slime : Character
 {
@@ -38,7 +37,7 @@ public sealed class Slime : Character
     private void PunchOnRPC(float x, float y)
     {
         _skillObjectList[0].SetActive(true);
-        _skillObjectList[0].transform.localPosition = new Vector3(x,0,y);
+        _skillObjectList[0].transform.localPosition = new Vector3(x, 0, y);
     }
 
     [PunRPC]
