@@ -10,7 +10,7 @@ public class PlayerListUI : MonoBehaviourPunCallbacks
 {
     #region Unity Field
     [SerializeField]
-    private Text _playerListText;
+    private Text _playerListText = null;
     #endregion
 
     private void Start()
@@ -30,8 +30,8 @@ public class PlayerListUI : MonoBehaviourPunCallbacks
 
     private void UpdatePlayerList()
     {
-        StringBuilder builder = new StringBuilder();
-        foreach (Player player in PhotonNetwork.PlayerList)
+        var builder = new StringBuilder();
+        foreach (var player in PhotonNetwork.PlayerList)
         {
             builder.AppendLine(
                 player.UserId.Equals(PhotonNetwork.LocalPlayer.UserId)

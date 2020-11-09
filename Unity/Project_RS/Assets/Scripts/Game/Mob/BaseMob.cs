@@ -8,7 +8,7 @@ public abstract class BaseMob : MonoBehaviourPunCallbacks, IPunObservable
 {
     #region Unity Field
     [SerializeField]
-    private GameObject _playerUiPrefab;
+    private GameObject _playerUiPrefab = null;
 
     [SerializeField]
     [Tooltip("현재 체력")]
@@ -131,7 +131,7 @@ public abstract class BaseMob : MonoBehaviourPunCallbacks, IPunObservable
         {
             Debug.Log($"hp is 0.");
             // RpcTarget.AllBuffered로 해야 다른 플레이어가 접속했을 때 자동으로 Dead RPC를 보내서 상대방 화면에서 죽음처리됨
-            photonView.RPC(nameof(Dead), RpcTarget.All, attacker.photonView.Controller.UserId);
+            photonView.RPC(nameof(DeadRPC), RpcTarget.All, attacker.photonView.Controller.UserId);
             Debug.Log("RPC 보냄");
         }
     }
@@ -152,12 +152,12 @@ public abstract class BaseMob : MonoBehaviourPunCallbacks, IPunObservable
 
         if (PhotonNetwork.InRoom)
         {
-            photonView.RPC(nameof(FlipX), RpcTarget.All, stickpos.x);
+            photonView.RPC(nameof(FlipXRPC), RpcTarget.All, stickpos.x);
         }
     }
 
     [PunRPC]
-    public void FlipX(float axis)
+    public void FlipXRPC(float axis)
     {
         if (axis == 0) // 조이스틱이 움직이지 않으면 바로 이전 상태 유지
         {
@@ -171,13 +171,13 @@ public abstract class BaseMob : MonoBehaviourPunCallbacks, IPunObservable
     /// </summary>
     /// <param name="attackerUserID">공격자의 PhotonPlayer.UserId</param>
     [PunRPC]
-    public void Dead(string attackerUserID)
+    public void DeadRPC(string attackerUserID)
     {
         Debug.Log("Dead RPC executed");
 
         // 씬 상의 플레이어들 중 공격자 UserId와 동일한 오브젝트를 가져옴
         BaseMob attacker = null;
-        foreach (BaseMob player in FindObjectsOfType<BaseMob>())
+        foreach (var player in FindObjectsOfType<BaseMob>())
         {
             if (player.photonView.Controller.UserId == attackerUserID)
             {

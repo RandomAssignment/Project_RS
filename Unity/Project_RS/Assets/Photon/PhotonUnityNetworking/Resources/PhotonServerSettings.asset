@@ -11,17 +11,17 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9f3758f8f58fdef43803eb9be1df0608, type: 3}
   m_Name: PhotonServerSettings
-  m_EditorClassIdentifier:
+  m_EditorClassIdentifier: 
   AppSettings:
     AppIdRealtime: 2580d019-aeb0-4910-8d34-01d5b7e24a23
-    AppIdChat:
-    AppIdVoice:
-    AppVersion:
+    AppIdChat: 
+    AppIdVoice: 
+    AppVersion: 
     UseNameServer: 1
-    FixedRegion:
-    Server:
+    FixedRegion: 
+    Server: 
     Port: 0
-    ProxyServer:
+    ProxyServer: 
     Protocol: 0
     EnableProtocolFallback: 1
     AuthMode: 0
@@ -33,16 +33,12 @@ MonoBehaviour:
   RunInBackground: 1
   StartInOfflineMode: 0
   RpcList:
-  - Dead
-  - FlipX
   - ClickRpc
+  - DeadRPC
   - DestroyRpc
-  - DestroySpaceship
-  - Fire
-  - RespawnSpaceship
-  - PunchOn
-  - PunchOnRPC
+  - FlipXRPC
   - PunchOffRPC
+  - PunchOnRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

@@ -5,14 +5,16 @@ public class PlayerUI : MonoBehaviour
 {
     #region Unity Field
     [SerializeField]
-    private Text _playerNameText;
+    private Text _playerNameText = null;
+
     [SerializeField]
-    private Image _healthBarImage;
+    private Image _healthBarImage = null;
+
     [SerializeField]
     private Vector3 _screenOffset = new Vector3(0f, 30f, 0f);
     #endregion
 
-    private BaseMob _target;
+    private BaseMob _target = null;
 
     private void Awake()
     {

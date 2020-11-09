@@ -11,7 +11,7 @@ public sealed class Dummy2 : Character
         Health = MaxHealth = 100;
         Speed = 7;
 
-        Skill testSkill = new Skill(this, "펀치", "자기 자신을 때린다 ㅋㅋ", cooldown: 10, PunchLogic);
+        var testSkill = new Skill(this, "펀치", "자기 자신을 때린다 ㅋㅋ", cooldown: 10, PunchLogic);
 
         Skills = new Dictionary<string, Skill>
         {
@@ -20,18 +20,18 @@ public sealed class Dummy2 : Character
     }
 
 
-    private GameObject[] _skillObjectList = new GameObject[3];
+    private readonly GameObject[] _skillObjectList = new GameObject[3];
     private void Start()
     {
-        for (int i = 0; i < transform.GetChild(1).childCount; i++)
+        for (var i = 0; i < transform.GetChild(1).childCount; i++)
             _skillObjectList[i] = transform.GetChild(1).GetChild(i).gameObject;
     }
 
     private IEnumerator PunchLogic()
     {
-        photonView.RPC("PunchOnRPC", RpcTarget.All, Skills["punch"]._skillDirection.x, Skills["punch"]._skillDirection.y);
+        photonView.RPC(nameof(PunchOnRPC), RpcTarget.All, Skills["punch"]._skillDirection.x, Skills["punch"]._skillDirection.y);
         yield return new WaitForSeconds(0.2f);
-        photonView.RPC("PunchOffRPC", RpcTarget.All);
+        photonView.RPC(nameof(PunchOffRPC), RpcTarget.All);
     }
 
     [PunRPC]

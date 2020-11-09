@@ -4,7 +4,7 @@ public class MainUIManager : MonoBehaviour
 {
     #region Unity Field
     [SerializeField]
-    private GameObject[] _ui;
+    private GameObject[] _ui = null;
     #endregion
 
     public void ViewPanel(int type)
@@ -13,7 +13,7 @@ public class MainUIManager : MonoBehaviour
     }
     public void ResetAndViewPanel(int type)
     {
-        for (int i = 0; i < _ui.Length; i++)
+        for (var i = 0; i < _ui.Length; i++)
         {
             _ui[i].SetActive(false);
         }

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-
+﻿
 using Photon.Pun;
 using Photon.Realtime;
 
@@ -37,7 +36,7 @@ public class MainScene : MonoBehaviourPunCallbacks
         // 메인화면에서 몬스터 선택 가능
         // type 값은 Resources에 있는 프리팹 이름 사용하기
         string[] testCharacters = { "Slime", "Dummy1", "Dummy2" };
-        string t = testCharacters[Random.Range(0, 3)];
+        var t = testCharacters[Random.Range(0, 3)];
         PhotonNetwork.LocalPlayer.CustomProperties = new Hashtable { ["type"] = t };
         PhotonNetwork.GameVersion = GameVersion;
         PhotonNetwork.ConnectUsingSettings();
@@ -56,14 +55,14 @@ public class MainScene : MonoBehaviourPunCallbacks
     {
         Debug.Log("랜덤 방 참여 실패. 새로운 방을 만듭니다.");
 
-        RoomOptions option = new RoomOptions
+        var option = new RoomOptions
         {
             MaxPlayers = _maxPlayersPerRoom,
             PublishUserId = true,
             CustomRoomProperties = new Hashtable()
         };
 
-        for (int i = 0; i < option.MaxPlayers; i++)
+        for (var i = 0; i < option.MaxPlayers; i++)
         {
             option.CustomRoomProperties.Add($"spawn{i}", false);
         }

@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 {
     #region Unity Field
     [SerializeField]
-    private BaseMob _playerPrefab;
+    private BaseMob _playerPrefab = null;
 
     [SerializeField]
     private Vector3[] _spawnPositions = new Vector3[8];
@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
 
         Debug.Assert(_playerPrefab != null, "플레이어 프리팹이 설정되어있지 않음");
-        string playerType = (string)PhotonNetwork.LocalPlayer.CustomProperties["type"];
+        var playerType = (string)PhotonNetwork.LocalPlayer.CustomProperties["type"];
         Debug.Log($"Player {PhotonNetwork.NickName} : type : {playerType}");
 
         RandomSpawnPlayer("Prefabs/Character/" + playerType);
@@ -47,9 +47,9 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
     {
-        for (int i = 0; i < PhotonNetwork.CurrentRoom.MaxPlayers; i++)
+        for (var i = 0; i < PhotonNetwork.CurrentRoom.MaxPlayers; i++)
         {
-            if (!propertiesThatChanged.TryGetValue($"spawn{i}", out object check))
+            if (!propertiesThatChanged.TryGetValue($"spawn{i}", out var check))
             {
                 continue;
             }
@@ -70,15 +70,15 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     private void RandomSpawnPlayer(string type)
     {
-        byte max = PhotonNetwork.CurrentRoom.MaxPlayers;
+        var max = PhotonNetwork.CurrentRoom.MaxPlayers;
 
-        Hashtable cp = PhotonNetwork.CurrentRoom.CustomProperties;
+        var cp = PhotonNetwork.CurrentRoom.CustomProperties;
         // 아직 플레이어가 스폰되지 않은 지역 중 랜덤으로 찾기
 
-        int n = -1;
-        for (int i = 0; i < max; i++)
+        var n = -1;
+        for (var i = 0; i < max; i++)
         {
-            int tmp = UnityEngine.Random.Range(0, max);
+            var tmp = UnityEngine.Random.Range(0, max);
             if (!(bool)cp[$"spawn{tmp}"])
             {
                 n = tmp;
@@ -100,7 +100,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         cp[$"spawn{n}"] = true;
         PhotonNetwork.CurrentRoom.SetCustomProperties(cp);
 
-        Vector3 pos = _spawnPositions[n];
+        var pos = _spawnPositions[n];
         PhotonNetwork.Instantiate(type, pos, Quaternion.identity, 0);
 
         Debug.Log($"Spawned position: {n}");
