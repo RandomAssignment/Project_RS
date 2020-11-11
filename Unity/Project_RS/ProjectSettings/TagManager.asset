@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Canvas
   - SkillController
+  - PlayerController
   - Skill
   layers:
   - Default

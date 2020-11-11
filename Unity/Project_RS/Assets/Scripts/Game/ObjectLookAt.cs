@@ -5,7 +5,7 @@ public class ObjectLookAt : MonoBehaviour
     private Transform _cameraTrans;
 
     // Start is called before the first frame update
-    private void Start()
+    private void Awake()
     {
         _cameraTrans = Camera.main.transform;
     }

@@ -29,8 +29,14 @@ public class Character : Mob, IPunObservable
 
         if (photonView.IsMine)
         {
-            GameObject.FindGameObjectWithTag("GameController").GetComponent<PlayerController>().SetTarget(this);
-            GameObject.FindGameObjectWithTag("SkillController").GetComponent<SkillController>().SetTarget(this);
+            var playerController = GameObject.FindGameObjectWithTag("PlayerController");
+            var skillController = GameObject.FindGameObjectWithTag("SkillController");
+
+            Debug.Assert(playerController);
+            Debug.Assert(skillController);
+
+            playerController.GetComponent<PlayerController>().SetTarget(this);
+            skillController.GetComponent<SkillController>().SetTarget(this);
         }
 
         _objRigidbody = gameObject.GetComponent<Rigidbody>();
@@ -67,6 +73,7 @@ public class Character : Mob, IPunObservable
     {
         if (PhotonNetwork.InRoom)
         {
+            Debug.Assert(_objRigidbody);
             _objRigidbody.transform.Translate(new Vector3(stickpos.x, 0, stickpos.y) * Time.deltaTime * Speed);
             photonView.RPC(nameof(FlipSpriteRPC), RpcTarget.All, stickpos.x);
         }

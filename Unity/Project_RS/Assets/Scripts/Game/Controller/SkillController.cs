@@ -1,24 +1,26 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class SkillController : MonoBehaviour, IDragHandler, IEndDragHandler
+public class SkillController : JoysticController
 {
-    public RectTransform Stick { get; private set; }
-    private Character _target;
-    private GameObject _backGround;
+    [SerializeField]
+    private Image _background = null;
 
-    public void OnDrag(PointerEventData eventData)
+    protected override void Awake()
     {
-        _backGround.SetActive(true);
-        Stick.position = eventData.position;
-        var value = Stick.rect.width / 2 - 30;
-        if (Stick.localPosition.magnitude > value)
-        {
-            Stick.localPosition = Stick.localPosition.normalized * value;
-        }
+        base.Awake();
+        Debug.Assert(_background);
+        _background.enabled = false;
     }
 
-    public void OnEndDrag(PointerEventData eventData)
+    public override void OnDrag(PointerEventData eventData)
+    {
+        _background.enabled = true;
+        base.OnDrag(eventData);
+    }
+
+    public override void OnEndDrag(PointerEventData eventData)
     {
         // 스틱의 LocalPosition에서 y값과 z값을 바꾸기
         var pos = Stick.localPosition.normalized;
@@ -26,39 +28,9 @@ public class SkillController : MonoBehaviour, IDragHandler, IEndDragHandler
         pos.y = pos.z;
         pos.z = yPos;
 
-        _target.UseSkill("Punch", pos);
+        Target.UseSkill(nameof(Punch), pos);
 
-        Stick.localPosition = Vector3.zero;
-        _backGround.SetActive(false);
-    }
-
-    public void SetTarget(Character target)
-    {
-        _target = target;
-    }
-
-    private void Awake()
-    {
-        transform.SetParent(GameObject.FindGameObjectWithTag("Canvas").transform, true);
-        Stick = transform.GetChild(1).GetComponent<RectTransform>();
-        _backGround = transform.GetChild(0).gameObject;
-        _backGround.SetActive(false);
-    }
-
-    private void FixedUpdate()
-    {
-        if (_target != null)
-        {
-
-        }
-    }
-
-    private void Update()
-    {
-        if (_target == null)
-        {
-            Destroy(gameObject);
-            return;
-        }
+        base.OnEndDrag(eventData);
+        _background.enabled = false;
     }
 }

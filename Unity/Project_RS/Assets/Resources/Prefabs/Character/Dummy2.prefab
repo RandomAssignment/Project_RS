@@ -169,10 +169,10 @@ MonoBehaviour:
   _typeName: "\uB354\uBBF82"
   _maxHealth: 120
   _speed: 8
-  _playerFloatingUiPrefab: {fileID: 4993088276567271056, guid: 43efb47efcd30fc4196093e9c514ab07,
-    type: 3}
   _characterSkills:
   - {fileID: 4785618525496995861}
+  _playerFloatingUiPrefab: {fileID: 4993088276567271056, guid: 43efb47efcd30fc4196093e9c514ab07,
+    type: 3}
 --- !u!1 &4100068645431076839
 GameObject:
   m_ObjectHideFlags: 0
