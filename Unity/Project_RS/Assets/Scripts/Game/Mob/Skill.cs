@@ -1,24 +1,37 @@
 ﻿using System;
 using System.Collections;
-
 using UnityEngine;
 
-public class Skill
+public abstract class Skill : MonoBehaviour
 {
+    #region Unity field
+    [SerializeField]
+    [Tooltip("스킬 이름")]
+    private string _name = string.Empty;
+
+    [SerializeField]
+    [Tooltip("스킬 설명")]
+    private string _description = string.Empty;
+
+    [SerializeField]
+    [Tooltip("스킬의 기본 쿨타임")]
+    private int _defaultCooldown = 0;
+    #endregion
+
     /// <summary>
     /// 스킬 이름
     /// </summary>
-    public readonly string Name;
+    public string Name => _name;
 
     /// <summary>
     /// 스킬 설명
     /// </summary>
-    public readonly string Description;
+    public string Description => _description;
 
     /// <summary>
     /// 스킬의 기본 쿨타임
     /// </summary>
-    public readonly int DefaultCooldown;
+    public int DefaultCooldown => _defaultCooldown;
 
     /// <summary>
     /// 스킬의 현재 쿨타임
@@ -28,35 +41,26 @@ public class Skill
     /// <summary>
     /// 스킬의 방향
     /// </summary>
-
-    public Vector3 _skillDirection;
+    public Vector3 Direction { get; private set; }
 
     /// <summary>
     /// 스킬이 현재 쿨타임인지를 반환
     /// </summary>
     public bool IsCooldown => Cooldown > 0;
 
-    private readonly Func<IEnumerator> _logic;
-    private readonly BaseMob _attacker;
+    /// <summary>
+    /// 스킬 오브젝트가 속한 Mob 오브젝트
+    /// </summary>
+    public Mob Attacker { get; private set; }
+
+    public abstract Func<IEnumerator> Logic { get; }
 
     private Coroutine _executeCoroutine = null;
 
-    /// <summary>
-    /// 스킬 인스턴스를 초기화 합니다.
-    /// </summary>
-    /// <param name="attacker">스킬 시전자</param>
-    /// <param name="name">스킬 이름</param>
-    /// <param name="desc">스킬 설명</param>
-    /// <param name="cooldown">스킬 쿨타임</param>
-    /// <param name="logic">코루틴으로 실행되는 스킬의 로직을 설정합니다.</param>
-    public Skill(BaseMob attacker, string name, string desc, int cooldown, Func<IEnumerator> logic)
+    protected virtual void Awake()
     {
-        Name = name;
-        Description = desc;
-        DefaultCooldown = cooldown;
-        Cooldown = 0;
-        _logic = logic;
-        _attacker = attacker;
+        Attacker = transform.root.gameObject.GetComponent<Mob>();
+        Debug.Assert(Attacker);
     }
 
     /// <summary>
@@ -64,26 +68,30 @@ public class Skill
     /// </summary>
     /// <param name="target">스킬을 맞는 대상</param>
     /// <param name="setCool">true일 경우 스킬의 쿨타임이 생깁니다.</param>
-    public void Use(Vector3 direction)
+    /// <returns>스킬 사용에 성공하면 true</returns>
+    public bool Use(Vector3 direction)
     {
-        _skillDirection = direction;
-        if (!_attacker.photonView.IsMine || IsCooldown)
+        Direction = direction;
+        Debug.Assert(Attacker, "Attacker is null");
+        Debug.Assert(Attacker.photonView, "photonView is null");
+        if (!Attacker.photonView.IsMine || IsCooldown)
         {
-            return;
+            return false;
         }
 
         // 스킬 중복 실행 방지
         if (_executeCoroutine != null)
         {
-            return;
+            return false;
         }
 
         // Use를 사용하자마자 바로 쿨타임 적용
-        Debug.Log("쿨타임 코루틴 시작");
-        _attacker.StartCoroutine(DecreaseCooldown());
+        print("쿨타임 코루틴 시작");
+        Attacker.StartCoroutine(DecreaseCooldown());
 
-        Debug.Log("스킬 로직 실행");
-        _attacker.StartCoroutine(ExecuteLogic());
+        print("스킬 로직 실행");
+        Attacker.StartCoroutine(ExecuteLogic());
+        return true;
     }
 
     private IEnumerator ExecuteLogic()
@@ -91,7 +99,7 @@ public class Skill
         // 스킬이 중복으로 실행되는 경우를 막기 위해
         // _executeCoroutine를 StartCoroutine 반환값으로 설정하고
         // 스킬로직 코루틴 실행이 완료될 때 까지 기다린 후 스킬 코루틴을 다시 null로 변경
-        _executeCoroutine = _attacker.StartCoroutine(_logic());
+        _executeCoroutine = Attacker.StartCoroutine(Logic());
         yield return _executeCoroutine;
         _executeCoroutine = null;
     }
@@ -101,8 +109,8 @@ public class Skill
     /// </summary>
     private IEnumerator DecreaseCooldown()
     {
-        WaitForSeconds wait1sec = new WaitForSeconds(1f);
-        Cooldown = DefaultCooldown;
+        var wait1sec = new WaitForSeconds(1f);
+        Cooldown = _defaultCooldown;
         while (IsCooldown)
         {
             Debug.Log($"cooldown: {Cooldown}");

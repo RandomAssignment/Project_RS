@@ -9,8 +9,8 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class GameManager : MonoBehaviourPunCallbacks
 {
     #region Unity Field
-    [SerializeField]
-    private BaseMob _playerPrefab = null;
+    // [SerializeField]
+    // private Mob _playerPrefab = null;
 
     [SerializeField]
     private Vector3[] _spawnPositions = new Vector3[8];
@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             Instance = this;
         }
 
-        Debug.Assert(_playerPrefab != null, "플레이어 프리팹이 설정되어있지 않음");
+        // Debug.Assert(_playerPrefab != null, "플레이어 프리팹이 설정되어있지 않음");
         var playerType = (string)PhotonNetwork.LocalPlayer.CustomProperties["type"];
         Debug.Log($"Player {PhotonNetwork.NickName} : type : {playerType}");
 
@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         base.OnPlayerLeftRoom(otherPlayer);
     }
 
-    public void AddKillLog(BaseMob killer, BaseMob target)
+    public void AddKillLog(Mob killer, Mob target)
     {
         Debug.Log($"Kill: {killer.photonView.Owner.NickName} -> {target.photonView.Owner.NickName}");
         // 데이터 추가 작업 필요

@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Canvas
   - SkillController
+  - Skill
   layers:
   - Default
   - TransparentFX

@@ -1,3 +1,3 @@
-﻿public abstract class Monster : BaseMob
+﻿public abstract class Monster : Mob
 {
 }

@@ -14,14 +14,14 @@ public class PlayerUI : MonoBehaviour
     private Vector3 _screenOffset = new Vector3(0f, 30f, 0f);
     #endregion
 
-    private BaseMob _target = null;
+    private Character _target = null;
 
     private void Awake()
     {
         transform.SetParent(GameObject.FindGameObjectWithTag("Canvas").transform, false);
     }
 
-    public void SetTarget(BaseMob target)
+    public void SetTarget(Character target)
     {
         _target = target;
 

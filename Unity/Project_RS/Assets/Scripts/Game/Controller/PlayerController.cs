@@ -1,19 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class SkillController : MonoBehaviour, IDragHandler, IEndDragHandler
+public class PlayerController : MonoBehaviour, IDragHandler, IEndDragHandler
 {
     public RectTransform Stick { get; private set; }
-    private BaseMob _target;
-    private GameObject _backGround;
+    private Character _target;
 
     public void OnDrag(PointerEventData eventData)
     {
-        _backGround.SetActive(true);
         Stick.position = eventData.position;
-        float value = Stick.rect.width / 2 - 30;
+        var value = Stick.rect.width / 2 - 30;
         if (Stick.localPosition.magnitude > value)
         {
             Stick.localPosition = Stick.localPosition.normalized * value;
@@ -22,12 +18,10 @@ public class SkillController : MonoBehaviour, IDragHandler, IEndDragHandler
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        _target.Skills["punch"].Use(Stick.localPosition.normalized);
         Stick.localPosition = Vector3.zero;
-        _backGround.SetActive(false);
     }
 
-    public void SetTarget(BaseMob target)
+    public void SetTarget(Character target)
     {
         _target = target;
     }
@@ -35,16 +29,14 @@ public class SkillController : MonoBehaviour, IDragHandler, IEndDragHandler
     private void Awake()
     {
         transform.SetParent(GameObject.FindGameObjectWithTag("Canvas").transform, true);
-        Stick = transform.GetChild(1).GetComponent<RectTransform>();
-        _backGround = transform.GetChild(0).gameObject;
-        _backGround.SetActive(false);
+        Stick = transform.GetChild(0).GetComponent<RectTransform>();
     }
 
     private void FixedUpdate()
     {
         if (_target != null)
         {
-
+            _target.Move(Stick.localPosition.normalized);
         }
     }
 

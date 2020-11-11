@@ -34,11 +34,12 @@ MonoBehaviour:
   StartInOfflineMode: 0
   RpcList:
   - ClickRpc
+  - DeadByMonsterRPC
+  - DeadByPlayerRPC
   - DeadRPC
   - DestroyRpc
-  - FlipXRPC
-  - PunchOffRPC
-  - PunchOnRPC
+  - FlipSpriteRPC
+  - UseSkillRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
