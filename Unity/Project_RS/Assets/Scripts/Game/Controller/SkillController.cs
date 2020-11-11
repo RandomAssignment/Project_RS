@@ -20,7 +20,14 @@ public class SkillController : MonoBehaviour, IDragHandler, IEndDragHandler
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        _target.UseSkill("Punch", Stick.localPosition.normalized);
+        // 스틱의 LocalPosition에서 y값과 z값을 바꾸기
+        var pos = Stick.localPosition.normalized;
+        var yPos = pos.y;
+        pos.y = pos.z;
+        pos.z = yPos;
+
+        _target.UseSkill("Punch", pos);
+
         Stick.localPosition = Vector3.zero;
         _backGround.SetActive(false);
     }
