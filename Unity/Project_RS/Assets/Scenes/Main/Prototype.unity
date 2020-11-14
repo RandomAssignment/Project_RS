@@ -1168,6 +1168,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76d0cb44cadc4bb40adb3ca787ca30dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _characterEnteredPosition: {x: 0, y: 5, z: 0}
   _spawnPositions:
   - {x: -1, y: 1.3, z: 45}
   - {x: -22.31, y: 1.3, z: 45}
@@ -1543,6 +1544,7 @@ GameObject:
   - component: {fileID: 2056223634}
   - component: {fileID: 2056223633}
   - component: {fileID: 2056223632}
+  - component: {fileID: 2056223635}
   m_Layer: 5
   m_Name: GameStartButton
   m_TagString: Untagged
@@ -1612,7 +1614,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2056223633}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2056223635}
+        m_MethodName: GameStart
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2056223633
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1650,3 +1663,15 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2056223630}
   m_CullTransparentMesh: 0
+--- !u!114 &2056223635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2056223630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0c078b88f01076479f3316d8b45fca3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
