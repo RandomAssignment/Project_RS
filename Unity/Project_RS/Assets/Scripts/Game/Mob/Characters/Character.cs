@@ -2,12 +2,10 @@
 using Photon.Pun;
 using UnityEngine;
 
-public class Character : Mob, IPunObservable
+public class Character : Mob
 {
     #region Unity Field
-    [SerializeField]
-    [Tooltip("캐릭터 위에 표시되는 이름과 체력바가 포함된 UI Prefab")]
-    private GameObject _playerFloatingUiPrefab = null;
+
     #endregion
 
     /// <summary>
@@ -17,16 +15,8 @@ public class Character : Mob, IPunObservable
 
     private Rigidbody _objRigidbody;
 
-    private GameObject _playerFloatingUI;
-
     protected override void InitializeMob()
     {
-        if (_playerFloatingUiPrefab != null)
-        {
-            _playerFloatingUI = Instantiate(_playerFloatingUiPrefab);
-            _playerFloatingUI.GetComponent<PlayerUI>().SetTarget(this);
-        }
-
         if (photonView.IsMine)
         {
             var playerController = GameObject.FindGameObjectWithTag("PlayerController");
@@ -127,6 +117,6 @@ public class Character : Mob, IPunObservable
     public void DeadRPC()
     {
         gameObject.SetActive(false);
-        _playerFloatingUI.SetActive(false);
+        InfoUI.SetActive(false);
     }
 }

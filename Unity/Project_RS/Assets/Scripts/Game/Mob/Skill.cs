@@ -74,8 +74,8 @@ public abstract class Skill : MonoBehaviour
         Direction = direction;
         Debug.Assert(Attacker, "Attacker is null");
         Debug.Assert(Attacker.photonView, "photonView is null");
-        if (!Attacker.photonView.IsMine || IsCooldown)
-        {
+        if (IsCooldown)
+        { //! 상대방이 스킬을 쓰면 자신의 씬에서 상대방이 스킬을 쓰는 것이므로 IsMine이 false가 되어 스킬 실행이 안됨
             return false;
         }
 

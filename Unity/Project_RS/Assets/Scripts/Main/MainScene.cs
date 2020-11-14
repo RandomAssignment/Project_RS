@@ -18,7 +18,7 @@ public class MainScene : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
-        Screen.SetResolution(1280, 720, false);
+        // Screen.SetResolution(1920, 1080, true);
         PhotonNetwork.SendRate = 60;
         PhotonNetwork.SerializationRate = 30;
         PhotonNetwork.AutomaticallySyncScene = true;

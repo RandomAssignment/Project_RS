@@ -166,12 +166,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _typeName: "\uC2AC\uB77C\uC784"
+  _infoUIPrefab: {fileID: 4993088276567271056, guid: 43efb47efcd30fc4196093e9c514ab07,
+    type: 3}
+  _uiScreenOffset: {x: 0, y: 100}
   _maxHealth: 100
   _speed: 7
   _characterSkills:
   - {fileID: 2119905878903889164}
-  _playerFloatingUiPrefab: {fileID: 4993088276567271056, guid: 43efb47efcd30fc4196093e9c514ab07,
-    type: 3}
 --- !u!1 &4100068645431076839
 GameObject:
   m_ObjectHideFlags: 0

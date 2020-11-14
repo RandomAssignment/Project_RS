@@ -105,7 +105,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 7425006531284731820}
   - {fileID: 7440283654042006887}
-  - {fileID: 0}
+  - {fileID: 3927816567849141913}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -167,12 +167,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _typeName: "\uB354\uBBF82"
+  _infoUIPrefab: {fileID: 4993088276567271056, guid: 43efb47efcd30fc4196093e9c514ab07,
+    type: 3}
+  _uiScreenOffset: {x: 0, y: 100}
   _maxHealth: 120
   _speed: 8
   _characterSkills:
   - {fileID: 4785618525496995861}
-  _playerFloatingUiPrefab: {fileID: 4993088276567271056, guid: 43efb47efcd30fc4196093e9c514ab07,
-    type: 3}
 --- !u!1 &4100068645431076839
 GameObject:
   m_ObjectHideFlags: 0
@@ -198,13 +199,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4100068645431076839}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_Children: []
   m_Father: {fileID: 4100068644474272608}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4100068645431076840
 SpriteRenderer:
   m_ObjectHideFlags: 0
