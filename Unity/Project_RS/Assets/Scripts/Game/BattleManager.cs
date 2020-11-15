@@ -47,19 +47,18 @@ public class BattleManager : MonoBehaviour, IOnEventCallback
 
     public void OnEvent(EventData photonEvent)
     {
-        var eventCode = (PhotonEventCodes)photonEvent.Code;
-        switch (eventCode)
+        switch (photonEvent.Code)
         {
-            case PhotonEventCodes.GameStart:
+            case (byte)PhotonEventCodes.GameStart:
                 OnGameStartEvent(photonEvent);
                 break;
-            case PhotonEventCodes.GameEnd:
+            case (byte)PhotonEventCodes.GameEnd:
                 OnGameEndEvent(photonEvent);
                 break;
-            case PhotonEventCodes.PlayerDead:
+            case (byte)PhotonEventCodes.PlayerDead:
                 OnPlayerDeadEvent(photonEvent);
                 break;
-            case PhotonEventCodes.PlayerLeft:
+            case (byte)PhotonEventCodes.PlayerLeft:
                 OnPlayerLeftEvent(photonEvent);
                 break;
             default:

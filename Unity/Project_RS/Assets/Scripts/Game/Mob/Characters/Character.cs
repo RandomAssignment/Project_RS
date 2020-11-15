@@ -69,6 +69,7 @@ public class Character : Mob
 
     public override void OnLeftRoom()
     {
+        //! BUG: 플레이어가 강제종료 시 메서드 호출 안됨
         if (photonView.IsMine)
         {
             PhotonNetwork.RaiseEvent(
