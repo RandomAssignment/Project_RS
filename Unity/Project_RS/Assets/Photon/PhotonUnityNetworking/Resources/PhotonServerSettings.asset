@@ -16,7 +16,7 @@ MonoBehaviour:
     AppIdRealtime: 2580d019-aeb0-4910-8d34-01d5b7e24a23
     AppIdChat: 
     AppIdVoice: 
-    AppVersion: 1
+    AppVersion: 
     UseNameServer: 1
     FixedRegion: 
     Server: 
@@ -26,9 +26,9 @@ MonoBehaviour:
     EnableProtocolFallback: 1
     AuthMode: 0
     EnableLobbyStatistics: 0
-    NetworkLogging: 1
-  DevRegion: kr
-  PunLogging: 1
+    NetworkLogging: 2
+  DevRegion: 
+  PunLogging: 0
   EnableSupportLogger: 0
   RunInBackground: 1
   StartInOfflineMode: 0
@@ -40,7 +40,6 @@ MonoBehaviour:
   - DestroyRpc
   - FlipSpriteRPC
   - UseSkillRPC
-  - InvokeGameStartEvent
   DisableAutoOpenWizard: 1
   ShowSettings: 1
-  DevRegionSetOnce: 1
+  DevRegionSetOnce: 0

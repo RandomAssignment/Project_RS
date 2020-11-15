@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Text;
+using ExitGames.Client.Photon;
 using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 
 public class Character : Mob
@@ -36,9 +39,12 @@ public class Character : Mob
 
         _objRigidbody = gameObject.GetComponent<Rigidbody>();
 
-
-
-        print($"user name: {photonView.Controller.NickName}\nuser id: {photonView.Controller.UserId}");
+        print(
+            new StringBuilder()
+            .AppendLine("\n[MOB_INFO]")
+            .AppendLine($"user name: {photonView.Controller.NickName}")
+            .AppendLine($"user id: {photonView.Controller.UserId}")
+            .Append($"type: {TypeName}"));
     }
 
     public override void OnEnable()
@@ -47,6 +53,8 @@ public class Character : Mob
         if (photonView.IsMine)
         {
             BattleManager.Instance.OnGameStart.AddListener(SpawnCharacter);
+            // 게임이 끝난 후 뭔가 설정해야 될 것이 있으면 아래 코드 활용하기
+            // BattleManager.Instance.OnGameEnd.AddListener();
         }
     }
 
@@ -61,71 +69,59 @@ public class Character : Mob
 
     public override void OnLeftRoom()
     {
-        print("방을 나갑니다.");
+        if (photonView.IsMine)
+        {
+            PhotonNetwork.RaiseEvent(
+                (byte)PhotonEventCodes.PlayerLeft,
+                new object[] { PhotonNetwork.NickName },
+                // 어차피 본인은 나갈꺼라 이벤트를 자신한테 또 보낼 필요가 없음
+                new RaiseEventOptions { Receivers = ReceiverGroup.Others },
+                new SendOptions { Reliability = true });
+        }
     }
 
     protected override void OnDead(Mob attacker)
     {
-        // RpcTarget.AllBuffered로 해야 다른 플레이어가 접속했을 때 자동으로 Dead RPC를 보내서 상대방 화면에서 죽음처리됨
-        if (attacker is Character character)
+        // 자신이 죽었을 때만 이벤트 호출하기
+        if (photonView.IsMine)
         {
-            photonView.RPC(nameof(DeadByPlayerRPC), RpcTarget.All, character.photonView.Controller.UserId);
-            return;
-        }
-        else if (attacker is Monster monster)
-        {
-            photonView.RPC(nameof(DeadByMonsterRPC), RpcTarget.All, monster.name);
-            return;
-        }
-        else
-        {
-            photonView.RPC(nameof(DeadRPC), RpcTarget.All);
-            return;
-        }
-    }
+            var eventCode = (byte)PhotonEventCodes.PlayerDead;
+            object[] contents = null;
+            var eventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+            var sendOptions = new SendOptions { Reliability = true };
 
-    /// <summary>
-    /// 플레이어가 죽었을 때 실행
-    /// </summary>
-    /// <param name="attackerUserID">공격자의 PhotonPlayer.UserId</param>
-    [PunRPC]
-    public void DeadByPlayerRPC(string attackerUserID)
-    {
-        if (string.IsNullOrEmpty(attackerUserID))
-        {
-            throw new System.ArgumentException($"'{nameof(attackerUserID)}' cannot be null or empty", nameof(attackerUserID));
-        }
-
-        // 씬 상의 플레이어들 중 공격자 UserId와 동일한 오브젝트를 가져옴
-        Mob attacker = null;
-        foreach (var player in FindObjectsOfType<Character>())
-        {
-            if (player.photonView.Controller.UserId == attackerUserID)
+            if (attacker is Character character) // attacker: player
             {
-                attacker = player;
-                break;
+                contents = new object[]
+                {
+                        (int)PlayerDeadReason.DeadByPlayer,
+                        PhotonNetwork.NickName,
+                        character.photonView.Controller.NickName,
+                        character.photonView.Controller.UserId
+                };
             }
+            else if (attacker is Monster monster) // attacker: monster
+            {
+                contents = new object[]
+                {
+                        (int)PlayerDeadReason.DeadByPlayer,
+                        PhotonNetwork.NickName,
+                        monster.TypeName
+                };
+            }
+            else if (ReferenceEquals(this, attacker)) // suicide
+            {
+                contents = new object[]
+                {
+                    (int)PlayerDeadReason.Suicide,
+                    PhotonNetwork.NickName
+                };
+            }
+            PhotonNetwork.RaiseEvent(eventCode, contents, eventOptions, sendOptions);
         }
 
-        if (attacker == null)
-        {
-            print("attacker의 UserId와 일치하는 플레이어를 찾지 못함");
-            return;
-        }
-
-        DeadRPC();
-        GameManager.Instance.AddKillLog(attacker, this);
-    }
-
-    [PunRPC]
-    public void DeadByMonsterRPC(string monsterName)
-    {
-        if (string.IsNullOrEmpty(monsterName))
-        {
-            throw new System.ArgumentException($"'{nameof(monsterName)}' cannot be null or empty", nameof(monsterName));
-        }
-
-        DeadRPC();
+        // 모든 화면에서 해당 오브젝트가 죽음 처리 되야 하므로 DeadRPC 실행
+        photonView.RPC(nameof(DeadRPC), RpcTarget.All);
     }
 
     [PunRPC]
@@ -133,6 +129,12 @@ public class Character : Mob
     {
         gameObject.SetActive(false);
         InfoUI.SetActive(false);
+
+        if (photonView.IsMine)
+        {
+            _playerController.gameObject.SetActive(false);
+            _skillController.gameObject.SetActive(false);
+        }
     }
 
     public void Move(Vector3 stickpos)

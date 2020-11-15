@@ -1,10 +1,7 @@
 ﻿using Photon.Pun;
-using Photon.Realtime;
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
-using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
@@ -31,7 +28,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         // Debug.Assert(_playerPrefab != null, "플레이어 프리팹이 설정되어있지 않음");
         var playerType = (string)PhotonNetwork.LocalPlayer.CustomProperties["type"];
-        Debug.Log($"Player {PhotonNetwork.NickName} : type : {playerType}");
+        print($"Player {PhotonNetwork.NickName} : type : {playerType}");
 
         PhotonNetwork.Instantiate($"Prefabs/Character/{playerType}", _characterEnteredPosition, Quaternion.identity, 0);
     }
@@ -41,34 +38,5 @@ public class GameManager : MonoBehaviourPunCallbacks
     public override void OnLeftRoom()
     {
         SceneManager.LoadScene("MainScene");
-    }
-
-    public override void OnPlayerEnteredRoom(Player newPlayer)
-    {
-        Debug.Log($"Player {newPlayer.NickName}이 들어왔습니다.");
-        Debug.Log($"{PhotonNetwork.MasterClient.NickName}가 이 방의 방장입니다.");
-    }
-
-    public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
-    {
-        for (var i = 0; i < PhotonNetwork.CurrentRoom.MaxPlayers; i++)
-        {
-            if (!propertiesThatChanged.TryGetValue($"spawn{i}", out var check))
-            {
-                continue;
-            }
-            print($"{i}: {(bool)check}");
-        }
-    }
-
-    public override void OnPlayerLeftRoom(Player otherPlayer)
-    {
-        base.OnPlayerLeftRoom(otherPlayer);
-    }
-
-    public void AddKillLog(Mob killer, Mob target)
-    {
-        Debug.Log($"Kill: {killer.photonView.Owner.NickName} -> {target.photonView.Owner.NickName}");
-        // 데이터 추가 작업 필요
     }
 }

@@ -27,7 +27,6 @@ public sealed class Punch : Skill
 
     private IEnumerator PunchLogic()
     {
-        print("펀치로직실행");
         Debug.Assert(Attacker.photonView);
         // NOTE: RPC는 UseSkill에서 사용했으므로 스킬에서 RPC를 사용할 필요는 없습니다.
         // e.g. SkillController.cs의 23번째 줄

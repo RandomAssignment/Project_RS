@@ -15,6 +15,13 @@ public class GameStartButton : MonoBehaviour
 
     public void GameStart()
     {
+        // 현재 플레이어가 1명 일 때 시작하지 못하도록 막기
+        if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
+        {
+            print("플레이어가 2명 이상이어야 합니다.");
+            return;
+        }
+
         PhotonNetwork.RaiseEvent(
             (byte)PhotonEventCodes.GameStart,
             null,

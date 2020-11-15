@@ -173,7 +173,6 @@ public abstract class Mob : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     protected virtual void UseSkillRPC(string skillName, Vector3 direction)
     {
-        print("Use skill!");
         if (_uniqueSkills.TryGetValue(skillName, out var skill))
         {
             skill.Use(direction);
@@ -199,7 +198,6 @@ public abstract class Mob : MonoBehaviourPunCallbacks, IPunObservable
     public void Hit(int damage, Mob attacker)
     {
         Health -= damage;
-        print("Hit!");
         Debug.Log($"damage: {damage}, attacker: {attacker.name}");
         if (Health == 0)
         {
