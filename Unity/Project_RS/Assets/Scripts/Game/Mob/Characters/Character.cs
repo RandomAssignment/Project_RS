@@ -67,20 +67,6 @@ public class Character : Mob
         }
     }
 
-    public override void OnLeftRoom()
-    {
-        //! BUG: 플레이어가 강제종료 시 메서드 호출 안됨
-        if (photonView.IsMine)
-        {
-            PhotonNetwork.RaiseEvent(
-                (byte)PhotonEventCodes.PlayerLeft,
-                new object[] { PhotonNetwork.NickName },
-                // 어차피 본인은 나갈꺼라 이벤트를 자신한테 또 보낼 필요가 없음
-                new RaiseEventOptions { Receivers = ReceiverGroup.Others },
-                new SendOptions { Reliability = true });
-        }
-    }
-
     protected override void OnDead(Mob attacker)
     {
         // 자신이 죽었을 때만 이벤트 호출하기

@@ -1,5 +1,6 @@
-﻿using Photon.Pun;
-
+﻿using ExitGames.Client.Photon;
+using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -38,5 +39,17 @@ public class GameManager : MonoBehaviourPunCallbacks
     public override void OnLeftRoom()
     {
         SceneManager.LoadScene("MainScene");
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.RaiseEvent(
+                (byte)PhotonEventCodes.PlayerLeft,
+                new object[] { otherPlayer.NickName },
+                new RaiseEventOptions { Receivers = ReceiverGroup.All },
+                new SendOptions { Reliability = true });
+        }
     }
 }
