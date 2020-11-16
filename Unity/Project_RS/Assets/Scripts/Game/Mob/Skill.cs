@@ -74,7 +74,7 @@ public abstract class Skill : MonoBehaviour
         Direction = direction;
         Debug.Assert(Attacker, "Attacker is null");
         Debug.Assert(Attacker.photonView, "photonView is null");
-        if (!Attacker.photonView.IsMine || IsCooldown)
+        if (IsCooldown)
         {
             return false;
         }
@@ -86,10 +86,7 @@ public abstract class Skill : MonoBehaviour
         }
 
         // Use를 사용하자마자 바로 쿨타임 적용
-        print("쿨타임 코루틴 시작");
         Attacker.StartCoroutine(DecreaseCooldown());
-
-        print("스킬 로직 실행");
         Attacker.StartCoroutine(ExecuteLogic());
         return true;
     }
@@ -113,7 +110,6 @@ public abstract class Skill : MonoBehaviour
         Cooldown = _defaultCooldown;
         while (IsCooldown)
         {
-            Debug.Log($"cooldown: {Cooldown}");
             yield return wait1sec;
             Cooldown--;
         }

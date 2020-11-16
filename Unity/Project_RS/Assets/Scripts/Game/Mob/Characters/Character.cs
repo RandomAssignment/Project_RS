@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Text;
+using ExitGames.Client.Photon;
 using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 
-public class Character : Mob, IPunObservable
+public class Character : Mob
 {
     #region Unity Field
-    [SerializeField]
-    [Tooltip("캐릭터 위에 표시되는 이름과 체력바가 포함된 UI Prefab")]
-    private GameObject _playerFloatingUiPrefab = null;
     #endregion
 
     /// <summary>
@@ -16,17 +16,11 @@ public class Character : Mob, IPunObservable
     public Queue<Skill> Skills { get; private set; }
 
     private Rigidbody _objRigidbody;
-
-    private GameObject _playerFloatingUI;
+    private PlayerController _playerController;
+    private SkillController _skillController;
 
     protected override void InitializeMob()
     {
-        if (_playerFloatingUiPrefab != null)
-        {
-            _playerFloatingUI = Instantiate(_playerFloatingUiPrefab);
-            _playerFloatingUI.GetComponent<PlayerUI>().SetTarget(this);
-        }
-
         if (photonView.IsMine)
         {
             var playerController = GameObject.FindGameObjectWithTag("PlayerController");
@@ -35,37 +29,98 @@ public class Character : Mob, IPunObservable
             Debug.Assert(playerController);
             Debug.Assert(skillController);
 
-            playerController.GetComponent<PlayerController>().SetTarget(this);
-            skillController.GetComponent<SkillController>().SetTarget(this);
+            _playerController = playerController.GetComponent<PlayerController>();
+            _playerController.SetTarget(this);
+
+            _skillController = skillController.GetComponent<SkillController>();
+            _skillController.SetTarget(this);
+            _skillController.gameObject.SetActive(false);
         }
 
         _objRigidbody = gameObject.GetComponent<Rigidbody>();
 
-        print($"user name: {photonView.Controller.NickName}\nuser id: {photonView.Controller.UserId}");
+        print(
+            new StringBuilder()
+            .AppendLine("\n[MOB_INFO]")
+            .AppendLine($"user name: {photonView.Controller.NickName}")
+            .AppendLine($"user id: {photonView.Controller.UserId}")
+            .Append($"type: {TypeName}"));
     }
 
-    public override void OnLeftRoom()
+    public override void OnEnable()
     {
-        print("방을 나갑니다.");
+        base.OnEnable();
+        if (photonView.IsMine)
+        {
+            BattleManager.Instance.OnGameStart.AddListener(SpawnCharacter);
+            // 게임이 끝난 후 뭔가 설정해야 될 것이 있으면 아래 코드 활용하기
+            // BattleManager.Instance.OnGameEnd.AddListener();
+        }
+    }
+
+    public override void OnDisable()
+    {
+        base.OnDisable();
+        if (photonView.IsMine)
+        {
+            BattleManager.Instance.OnGameStart.RemoveListener(SpawnCharacter);
+        }
     }
 
     protected override void OnDead(Mob attacker)
     {
-        // RpcTarget.AllBuffered로 해야 다른 플레이어가 접속했을 때 자동으로 Dead RPC를 보내서 상대방 화면에서 죽음처리됨
-        if (attacker is Character character)
+        // 자신이 죽었을 때만 이벤트 호출하기
+        if (photonView.IsMine)
         {
-            photonView.RPC(nameof(DeadByPlayerRPC), RpcTarget.All, character.photonView.Controller.UserId);
-            return;
+            var eventCode = (byte)PhotonEventCodes.PlayerDead;
+            object[] contents = null;
+            var eventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+            var sendOptions = new SendOptions { Reliability = true };
+
+            if (attacker is Character character) // attacker: player
+            {
+                contents = new object[]
+                {
+                        (int)PlayerDeadReason.DeadByPlayer,
+                        PhotonNetwork.NickName,
+                        character.photonView.Controller.NickName,
+                        character.photonView.Controller.UserId
+                };
+            }
+            else if (attacker is Monster monster) // attacker: monster
+            {
+                contents = new object[]
+                {
+                        (int)PlayerDeadReason.DeadByPlayer,
+                        PhotonNetwork.NickName,
+                        monster.TypeName
+                };
+            }
+            else if (ReferenceEquals(this, attacker)) // suicide
+            {
+                contents = new object[]
+                {
+                    (int)PlayerDeadReason.Suicide,
+                    PhotonNetwork.NickName
+                };
+            }
+            PhotonNetwork.RaiseEvent(eventCode, contents, eventOptions, sendOptions);
         }
-        else if (attacker is Monster monster)
+
+        // 모든 화면에서 해당 오브젝트가 죽음 처리 되야 하므로 DeadRPC 실행
+        photonView.RPC(nameof(DeadRPC), RpcTarget.All);
+    }
+
+    [PunRPC]
+    public void DeadRPC()
+    {
+        gameObject.SetActive(false);
+        InfoUI.SetActive(false);
+
+        if (photonView.IsMine)
         {
-            photonView.RPC(nameof(DeadByMonsterRPC), RpcTarget.All, monster.name);
-            return;
-        }
-        else
-        {
-            photonView.RPC(nameof(DeadRPC), RpcTarget.All);
-            return;
+            _playerController.gameObject.SetActive(false);
+            _skillController.gameObject.SetActive(false);
         }
     }
 
@@ -79,54 +134,36 @@ public class Character : Mob, IPunObservable
         }
     }
 
-    /// <summary>
-    /// 플레이어가 죽었을 때 실행
-    /// </summary>
-    /// <param name="attackerUserID">공격자의 PhotonPlayer.UserId</param>
-    [PunRPC]
-    public void DeadByPlayerRPC(string attackerUserID)
+    private void SpawnCharacter()
     {
-        if (string.IsNullOrEmpty(attackerUserID))
-        {
-            throw new System.ArgumentException($"'{nameof(attackerUserID)}' cannot be null or empty", nameof(attackerUserID));
-        }
+        _skillController.gameObject.SetActive(true);
+        RandomSpawnPlayer();
+    }
 
-        // 씬 상의 플레이어들 중 공격자 UserId와 동일한 오브젝트를 가져옴
-        Mob attacker = null;
-        foreach (var player in FindObjectsOfType<Character>())
+    private void RandomSpawnPlayer()
+    {
+        var max = PhotonNetwork.CurrentRoom.MaxPlayers;
+        var property = PhotonNetwork.CurrentRoom.CustomProperties;
+        // 아직 플레이어가 스폰되지 않은 지역 중 랜덤으로 찾기
+
+        var n = -1;
+        for (var i = 0; i < max; i++)
         {
-            if (player.photonView.Controller.UserId == attackerUserID)
+            var tmp = Random.Range(0, max);
+            if (!(bool)property[$"spawn{tmp}"])
             {
-                attacker = player;
+                n = tmp;
                 break;
             }
         }
 
-        if (attacker == null)
-        {
-            print("attacker의 UserId와 일치하는 플레이어를 찾지 못함");
-            return;
-        }
+        // 해당 플레이어가 스폰할 지점의 값을 true로 바꿔서 다른 플레이어가 스폰하지 못하도록 하기
+        property[$"spawn{n}"] = true;
+        PhotonNetwork.CurrentRoom.SetCustomProperties(property);
 
-        DeadRPC();
-        GameManager.Instance.AddKillLog(attacker, this);
-    }
+        var pos = GameManager.Instance.SpawnPositions[n];
+        transform.position = pos;
 
-    [PunRPC]
-    public void DeadByMonsterRPC(string monsterName)
-    {
-        if (string.IsNullOrEmpty(monsterName))
-        {
-            throw new System.ArgumentException($"'{nameof(monsterName)}' cannot be null or empty", nameof(monsterName));
-        }
-
-        DeadRPC();
-    }
-
-    [PunRPC]
-    public void DeadRPC()
-    {
-        gameObject.SetActive(false);
-        _playerFloatingUI.SetActive(false);
+        Debug.Log($"Spawned position: {n}");
     }
 }

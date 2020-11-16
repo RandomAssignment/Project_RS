@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerUI : MonoBehaviour
+public class FloatingInfoUI : MonoBehaviour
 {
     #region Unity Field
     [SerializeField]
@@ -9,21 +9,20 @@ public class PlayerUI : MonoBehaviour
 
     [SerializeField]
     private Image _healthBarImage = null;
-
-    [SerializeField]
-    private Vector3 _screenOffset = new Vector3(0f, 30f, 0f);
     #endregion
 
-    private Character _target = null;
+    private Vector2 _screenOffset = new Vector2(0f, 30f);
+    private Mob _target = null;
 
     private void Awake()
     {
         transform.SetParent(GameObject.FindGameObjectWithTag("Canvas").transform, false);
     }
 
-    public void SetTarget(Character target)
+    public void SetTarget(Mob target, Vector2 offset)
     {
         _target = target;
+        _screenOffset = offset;
 
         if (_playerNameText != null)
         {
@@ -46,7 +45,7 @@ public class PlayerUI : MonoBehaviour
     {
         if (_target != null)
         {
-            transform.position = Camera.main.WorldToScreenPoint(_target.transform.position) + _screenOffset;
+            transform.position = Camera.main.WorldToScreenPoint(_target.transform.position) + (Vector3)_screenOffset;
         }
     }
 }

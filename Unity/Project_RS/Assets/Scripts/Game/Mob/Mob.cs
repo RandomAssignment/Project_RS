@@ -10,6 +10,14 @@ public abstract class Mob : MonoBehaviourPunCallbacks, IPunObservable
     [Tooltip("해당 몹의 타입이름")]
     private string _typeName = string.Empty;
 
+    [SerializeField]
+    [Tooltip("몹 위에 표시되는 이름과 체력바가 포함된 UI Prefab")]
+    private GameObject _infoUIPrefab = null;
+
+    [SerializeField]
+    [Tooltip("Mob Info UI Prefab의 스크린 오프셋")]
+    private Vector2 _uiScreenOffset = new Vector2(0, 100);
+
     //[SerializeField]
     //[Tooltip("현재 체력")]
     //private int _health;
@@ -27,6 +35,12 @@ public abstract class Mob : MonoBehaviourPunCallbacks, IPunObservable
     [Tooltip("몹의 기본 고유 스킬 목록")]
     private Skill[] _characterSkills = null;
     #endregion
+
+    /// <summary>
+    /// Mob Info UI GameObject
+    /// </summary>
+    public GameObject InfoUI => _infoUI;
+    private GameObject _infoUI;
 
     /// <summary>
     /// 현재 체력. 입력값이 0보다 작으면 0으로 저장된다.
@@ -97,6 +111,12 @@ public abstract class Mob : MonoBehaviourPunCallbacks, IPunObservable
         foreach (var skill in _characterSkills)
         {
             _uniqueSkills.Add(skill.name, skill);
+        }
+
+        if (_infoUIPrefab != null)
+        {
+            _infoUI = Instantiate(_infoUIPrefab);
+            _infoUI.GetComponent<FloatingInfoUI>().SetTarget(this, _uiScreenOffset);
         }
 
         InitializeMob();
@@ -186,7 +206,7 @@ public abstract class Mob : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    public virtual void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
         {
