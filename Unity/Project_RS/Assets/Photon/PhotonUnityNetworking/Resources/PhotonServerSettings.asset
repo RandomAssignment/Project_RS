@@ -26,20 +26,18 @@ MonoBehaviour:
     EnableProtocolFallback: 1
     AuthMode: 0
     EnableLobbyStatistics: 0
-    NetworkLogging: 2
-  DevRegion: 
+    NetworkLogging: 1
+  DevRegion: kr
   PunLogging: 0
   EnableSupportLogger: 0
   RunInBackground: 1
   StartInOfflineMode: 0
   RpcList:
   - ClickRpc
-  - DeadByMonsterRPC
-  - DeadByPlayerRPC
   - DeadRPC
   - DestroyRpc
   - FlipSpriteRPC
   - UseSkillRPC
   DisableAutoOpenWizard: 1
-  ShowSettings: 1
-  DevRegionSetOnce: 0
+  ShowSettings: 0
+  DevRegionSetOnce: 1

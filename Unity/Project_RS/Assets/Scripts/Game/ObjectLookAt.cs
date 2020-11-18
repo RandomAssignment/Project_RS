@@ -2,17 +2,11 @@
 
 public class ObjectLookAt : MonoBehaviour
 {
-    private Transform _cameraTrans;
 
     // Start is called before the first frame update
     private void Awake()
     {
-        _cameraTrans = Camera.main.transform;
+        transform.rotation = Quaternion.Euler(-25, -180,0);
     }
 
-    // Update is called once per frame
-    private void Update()
-    {
-        transform.LookAt(_cameraTrans);
-    }
 }
