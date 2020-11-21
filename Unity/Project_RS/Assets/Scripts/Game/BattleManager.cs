@@ -1,14 +1,12 @@
-﻿using System.Collections.Generic;
-using ExitGames.Client.Photon;
+﻿using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
-using UnityEngine;
 using UnityEngine.Events;
 
 /// <summary>
 /// 게임에 대한 전반적인 기록 및 컨트롤을 담당
 /// </summary>
-public class BattleManager : MonoBehaviour, IOnEventCallback
+public class BattleManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
     /// <summary>
     /// 싱글톤
@@ -25,7 +23,49 @@ public class BattleManager : MonoBehaviour, IOnEventCallback
     /// </summary>
     public UnityEvent OnGameEnd { get; } = new UnityEvent();
 
-    private const string SurviveCountKey = "survive";
+    /// <summary>
+    /// 현재 살아남은 인원
+    /// </summary>
+    public int SurvivedCount
+    {
+        get => _survivedCount;
+        private set
+        {
+            if (value == 1 && !IsLocalPlayerDead)
+            {
+                // 자신만 살아남았으므로 GameEnd 이벤트를 자신이 모두에게 보냄
+                LocalPlayerRank = 1;
+
+                PhotonNetwork.RaiseEvent(
+                    (byte)PhotonEventCodes.GameEnd,
+                    new object[]
+                    {
+                         PhotonNetwork.LocalPlayer.NickName,
+                         PhotonNetwork.LocalPlayer.UserId
+                    },
+                    new RaiseEventOptions { Receivers = ReceiverGroup.All },
+                    new SendOptions { DeliveryMode = DeliveryMode.Reliable });
+            }
+
+            _survivedCount = value;
+        }
+    }
+    private int _survivedCount;
+
+    /// <summary>
+    /// 플레이어의 등수. 로컬 플레이어가 죽을 때 몇등인지 결정됨
+    /// </summary>
+    public int LocalPlayerRank { get; private set; }
+
+    /// <summary>
+    /// 로컬 플레이어의 생존 여부
+    /// </summary>
+    public bool IsLocalPlayerDead { get; private set; }
+
+    /// <summary>
+    /// 게임이 진행중인지 여부
+    /// </summary>
+    public bool IsGameInProgress { get; private set; }
 
     private void Awake()
     {
@@ -35,14 +75,24 @@ public class BattleManager : MonoBehaviour, IOnEventCallback
         }
     }
 
-    private void OnEnable()
+    public override void OnEnable()
     {
+        base.OnEnable();
         PhotonNetwork.AddCallbackTarget(this);
     }
 
-    private void OnDisable()
+    public override void OnDisable()
     {
+        base.OnDisable();
         PhotonNetwork.RemoveCallbackTarget(this);
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        if (IsGameInProgress)
+        {
+            SurvivedCount--;
+        }
     }
 
     public void OnEvent(EventData photonEvent)
@@ -68,12 +118,8 @@ public class BattleManager : MonoBehaviour, IOnEventCallback
 
     private void OnGameStartEvent(EventData _)
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            var property = PhotonNetwork.CurrentRoom.CustomProperties;
-            property.Add(SurviveCountKey, (int)PhotonNetwork.CurrentRoom.PlayerCount);
-            PhotonNetwork.CurrentRoom.SetCustomProperties(property);
-        }
+        SurvivedCount = PhotonNetwork.CurrentRoom.PlayerCount;
+        IsGameInProgress = true;
         OnGameStart?.Invoke();
     }
 
@@ -86,12 +132,12 @@ public class BattleManager : MonoBehaviour, IOnEventCallback
         var id = data[1];
 
         print($"플레이어 {name}이 마지막으로 생존하였습니다!\nUserId: {id}");
+        print($"{LocalPlayerRank}등");
+        IsGameInProgress = false;
     }
 
     private void OnPlayerDeadEvent(EventData photonEvent)
     {
-        ReduceSurviveCount();
-
         var data = (object[])photonEvent.CustomData;
         var reason = (PlayerDeadReason)data[0];
         var playerName = (string)data[1];
@@ -116,80 +162,21 @@ public class BattleManager : MonoBehaviour, IOnEventCallback
                 break;
         }
 
-        CheckGameEnd();
+        // 이벤트를 보낸 플레이어가 자신이면 랭크 기록
+        if (PhotonNetwork.CurrentRoom.GetPlayer(photonEvent.Sender).IsLocal)
+        {
+            LocalPlayerRank = SurvivedCount;
+            IsLocalPlayerDead = true;
+        }
+        SurvivedCount--;
     }
 
     private void OnPlayerLeftEvent(EventData photonEvent)
     {
-        ReduceSurviveCount();
-
         var data = (object[])photonEvent.CustomData;
         var playerName = (string)data[0];
 
         print($"플레이어 {playerName}가 나갔습니다.");
-
-        CheckGameEnd();
-    }
-
-    private void ReduceSurviveCount()
-    {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            var property = PhotonNetwork.CurrentRoom.CustomProperties;
-            var prevCount = (int)property[SurviveCountKey];
-            property[SurviveCountKey] = prevCount - 1;
-            PhotonNetwork.CurrentRoom.SetCustomProperties(property);
-        }
-    }
-
-    private void CheckGameEnd()
-    {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            var property = PhotonNetwork.CurrentRoom.CustomProperties;
-            var exist = property.TryGetValue(SurviveCountKey, out var count);
-            if (exist)
-            {
-                var surviveCount = (int)count;
-                if (surviveCount == 1)
-                {
-                    var (isLast, name, id) = FindLastSurviedPlayer();
-
-                    Debug.Assert(isLast); // 테스트
-
-                    PhotonNetwork.RaiseEvent(
-                        (byte)PhotonEventCodes.GameEnd,
-                        new object[]
-                        {
-                            name,
-                            id
-                        },
-                        new RaiseEventOptions { Receivers = ReceiverGroup.All },
-                        new SendOptions { DeliveryMode = DeliveryMode.Reliable });
-
-                    return;
-                }
-            }
-        }
-    }
-
-    private (bool isLast, string name, string id) FindLastSurviedPlayer()
-    {
-        var players = FindObjectsOfType<Character>();
-
-        var find = new List<Character>();
-        foreach (var player in players)
-        {
-            if (player.gameObject.activeSelf)
-            {
-                find.Add(player);
-            }
-        }
-
-        if (find.Count == 1)
-        {
-            return (true, find[0].photonView.Controller.NickName, find[0].photonView.Controller.UserId);
-        }
-        return (false, null, null);
+        SurvivedCount--;
     }
 }

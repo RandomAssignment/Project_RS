@@ -1,6 +1,4 @@
-﻿using ExitGames.Client.Photon;
-using Photon.Pun;
-using Photon.Realtime;
+﻿using Photon.Pun;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -14,6 +12,9 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField]
     [Tooltip("게임을 시작했을 때 스폰되는 위치")]
     private Vector3[] _spawnPositions = new Vector3[8];
+
+    [SerializeField]
+    private GameObject _gameOverPanel;
     #endregion
 
     public static GameManager Instance { get; private set; }
@@ -34,22 +35,25 @@ public class GameManager : MonoBehaviourPunCallbacks
         PhotonNetwork.Instantiate($"Prefabs/Character/{playerType}", _characterEnteredPosition, Quaternion.identity, 0);
     }
 
-    public void LeaveRoom() => PhotonNetwork.LeaveRoom();
+    public override void OnEnable()
+    {
+        base.OnEnable();
+        BattleManager.Instance.OnGameEnd?.AddListener(OpenGameOverPanel);
+    }
+
+    public override void OnDisable()
+    {
+        base.OnDisable();
+        BattleManager.Instance.OnGameEnd?.RemoveListener(OpenGameOverPanel);
+    }
 
     public override void OnLeftRoom()
     {
         SceneManager.LoadScene("MainScene");
     }
 
-    public override void OnPlayerLeftRoom(Player otherPlayer)
+    private void OpenGameOverPanel()
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            PhotonNetwork.RaiseEvent(
-                (byte)PhotonEventCodes.PlayerLeft,
-                new object[] { otherPlayer.NickName },
-                new RaiseEventOptions { Receivers = ReceiverGroup.All },
-                new SendOptions { Reliability = true });
-        }
+        _gameOverPanel.SetActive(true);
     }
 }
