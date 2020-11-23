@@ -81,10 +81,12 @@ public abstract class Mob : MonoBehaviourPunCallbacks, IPunObservable
     protected SpriteRenderer MobSprite { get; private set; }
 
     /// <summary>
-    /// 몹이 기본으로 가지는 고유 스킬목록<para/>
-    /// key: 스킬의 게임오브젝트 이름<para/>
-    /// value: 스킬 게임오브젝트가 가지고 있는 Skill 인스턴스
+    /// 몹이 기본으로 가지는 고유 스킬목록
     /// </summary>
+    /// <remarks>
+    /// key: 스킬의 게임오브젝트 이름<br/>
+    /// value: 스킬 게임오브젝트가 가지고 있는 Skill 인스턴스
+    /// </remarks>
     protected Dictionary<string, Skill> _uniqueSkills;
 
     private Vector3 _currentPosition;
