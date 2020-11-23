@@ -195,10 +195,10 @@ public abstract class Mob : MonoBehaviourPunCallbacks, IPunObservable
     /// </summary>
     /// <param name="damage">데미지</param>
     /// <param name="attacker">데미지를 주는 Mob개체</param>
-    public void Hit(int damage, Mob attacker)
+    public virtual void Hit(int damage, Mob attacker)
     {
-        Health -= damage;
         Debug.Log($"damage: {damage}, attacker: {attacker.name}");
+        Health -= damage;
         if (Health == 0)
         {
             Debug.Log($"hp is 0.");

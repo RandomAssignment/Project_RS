@@ -6,13 +6,13 @@ public class GameOverUI : MonoBehaviour
 {
     #region Unity field
     [SerializeField]
-    private Text _gameOverTitle;
+    private Text _gameOverTitle = null;
 
     [SerializeField]
-    private Text _gameOverDescription;
+    private Text _gameOverDescription = null;
 
     [SerializeField]
-    private Button _exitButton;
+    private Button _exitButton = null;
     #endregion
 
     // GameOverPanel은 게임이 종료되었을 때만 활성화되므로

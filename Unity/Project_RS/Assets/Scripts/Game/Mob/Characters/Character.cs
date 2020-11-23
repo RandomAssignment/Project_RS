@@ -67,6 +67,26 @@ public class Character : Mob
         }
     }
 
+    public override void Hit(int damage, Mob attacker)
+    {
+        // 플레이어가 Hit당할 때는 때린 사람과 맞는 자신이 함께 존재하므로
+        // Hit당한 자신이 HP를 수정함
+
+        // TODO: 이거 관련해서 의논 후 수정 필요
+        // 자신이 상대방에게 Hit당했을 때 자신을 Hit한 상대방의 화면에 있는 자신 오브젝트가 이를 실행해야 하느냐
+        // 아니면 자신의 화면에 있는 자신 오브젝트가 이를 실행해야 하느냐
+        // 근데 이렇게 하면(현행 로직) 네트워크 렉으로 스킬 동작이 늦게 보이면 상대방을 나를 때렸지만 피가 안깎이고 내 화면에서 상대방이 때렸을 때만
+        // 피가 깎여서 이렇게 하면 안될거 같음
+        // 일단 차후 수정방향으로는 상대방이 나를 때리면 일단 상대방화면에서 나를 때렸을 때 피를 깎고
+        // 내 화면에서는 피는 깎지 않고 스킬동작만 보이게 해야 될거 같음
+        // 그러면 이 구현대로 했을 때 아래 코드는 !photonView.IsMine 일때 실행해야 됨
+        // 이렇게 수정할 때 분명 다른 코드에서도 수정해야 할 부분이 있으므로 수정 시 확인해서 수정하기
+        if (photonView.IsMine)
+        {
+            base.Hit(damage, attacker);
+        }
+    }
+
     protected override void OnDead(Mob attacker)
     {
         // 자신이 죽었을 때만 이벤트 호출하기
@@ -105,6 +125,7 @@ public class Character : Mob
                 };
             }
             PhotonNetwork.RaiseEvent(eventCode, contents, eventOptions, sendOptions);
+            print("RaiseEvent 실행됨"); //! 아마 여기서 버그가 발생하는거 같은데 확인 필요
         }
 
         // 모든 화면에서 해당 오브젝트가 죽음 처리 되야 하므로 DeadRPC 실행

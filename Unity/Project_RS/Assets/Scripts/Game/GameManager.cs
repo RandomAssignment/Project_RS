@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     private Vector3[] _spawnPositions = new Vector3[8];
 
     [SerializeField]
-    private GameObject _gameOverPanel;
+    private GameObject _gameOverPanel = null;
     #endregion
 
     public static GameManager Instance { get; private set; }
