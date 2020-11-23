@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
@@ -9,11 +8,6 @@ public class Character : Mob
 {
     #region Unity Field
     #endregion
-
-    /// <summary>
-    /// 획득한 순서대로 사용하는 스킬 목록. Dequeue() 메소드 사용하기
-    /// </summary>
-    public Queue<Skill> Skills { get; private set; }
 
     private Rigidbody _objRigidbody;
     private PlayerController _playerController;
@@ -75,8 +69,8 @@ public class Character : Mob
         // TODO: 이거 관련해서 의논 후 수정 필요
         // 자신이 상대방에게 Hit당했을 때 자신을 Hit한 상대방의 화면에 있는 자신 오브젝트가 이를 실행해야 하느냐
         // 아니면 자신의 화면에 있는 자신 오브젝트가 이를 실행해야 하느냐
-        // 근데 이렇게 하면(현행 로직) 네트워크 렉으로 스킬 동작이 늦게 보이면 상대방을 나를 때렸지만 피가 안깎이고 내 화면에서 상대방이 때렸을 때만
-        // 피가 깎여서 이렇게 하면 안될거 같음
+        // 근데 이렇게 하면(현행 로직) 네트워크 렉으로 스킬 동작이 늦게 보이면 상대방을 나를 때렸지만 
+        // 피가 안깎이고 내 화면에서 상대방이 때렸을 때만 피가 깎여서 이렇게 하면 안될거 같음
         // 일단 차후 수정방향으로는 상대방이 나를 때리면 일단 상대방화면에서 나를 때렸을 때 피를 깎고
         // 내 화면에서는 피는 깎지 않고 스킬동작만 보이게 해야 될거 같음
         // 그러면 이 구현대로 했을 때 아래 코드는 !photonView.IsMine 일때 실행해야 됨
@@ -132,6 +126,9 @@ public class Character : Mob
         photonView.RPC(nameof(DeadRPC), RpcTarget.All);
     }
 
+    /// <summary>
+    /// 캐릭터의 죽음관련 행동을 처리하는 RPC메소드입니다.
+    /// </summary>
     [PunRPC]
     public void DeadRPC()
     {
@@ -145,6 +142,10 @@ public class Character : Mob
         }
     }
 
+    /// <summary>
+    /// RPC를 사용하여 게임 내 캐릭터를 움직입니다.
+    /// </summary>
+    /// <param name="stickpos">캐릭터가 움직일 방향</param>
     public void Move(Vector3 stickpos)
     {
         if (PhotonNetwork.InRoom)
@@ -155,12 +156,22 @@ public class Character : Mob
         }
     }
 
+    /// <summary>
+    /// 스킬 컨트롤러를 활성화하고 캐릭터를 랜덤스폰합니다.
+    /// </summary>
     private void SpawnCharacter()
     {
         _skillController.gameObject.SetActive(true);
         RandomSpawnPlayer();
     }
 
+    /// <summary>
+    /// 랜덤으로 캐릭터를 스폰합니다.
+    /// </summary>
+    /// <remarks>
+    /// 캐릭터의 위치는 OnPhotonSerializeView로 공유되고 있으므로 OnEnable, OnDisable에서 게임시작 이벤트를
+    /// photonView.IsMine일 경우에만 등록하여 방장이 게임을 시작하면 자신의 캐릭터만 이 메소드를 실행함
+    /// </remarks>
     private void RandomSpawnPlayer()
     {
         var max = PhotonNetwork.CurrentRoom.MaxPlayers;
