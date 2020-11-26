@@ -64,10 +64,6 @@ public class MainScene : MonoBehaviourPunCallbacks
         // TODO: PropertyConstants 라는 이름으로 const string만 모아놓은 클래스 만들기
         option.CustomRoomProperties.Add("game-start", false);
         option.CustomRoomPropertiesForLobby = new string[] { "game-start" };
-        for (var i = 0; i < option.MaxPlayers; i++)
-        {
-            option.CustomRoomProperties.Add($"spawn{i}", false);
-        }
 
         PhotonNetwork.CreateRoom(null, option);
     }

@@ -119,7 +119,7 @@ public class Character : Mob
                 };
             }
             PhotonNetwork.RaiseEvent(eventCode, contents, eventOptions, sendOptions);
-            print("RaiseEvent 실행됨"); //! 아마 여기서 버그가 발생하는거 같은데 확인 필요
+            print("RaiseEvent 실행됨");
         }
 
         // 모든 화면에서 해당 오브젝트가 죽음 처리 되야 하므로 DeadRPC 실행
@@ -161,41 +161,7 @@ public class Character : Mob
     /// </summary>
     private void SpawnCharacter()
     {
+        transform.position = (Vector3)PhotonNetwork.LocalPlayer.CustomProperties["spawn"];
         _skillController.gameObject.SetActive(true);
-        RandomSpawnPlayer();
-    }
-
-    /// <summary>
-    /// 랜덤으로 캐릭터를 스폰합니다.
-    /// </summary>
-    /// <remarks>
-    /// 캐릭터의 위치는 OnPhotonSerializeView로 공유되고 있으므로 OnEnable, OnDisable에서 게임시작 이벤트를
-    /// photonView.IsMine일 경우에만 등록하여 방장이 게임을 시작하면 자신의 캐릭터만 이 메소드를 실행함
-    /// </remarks>
-    private void RandomSpawnPlayer()
-    {
-        var max = PhotonNetwork.CurrentRoom.MaxPlayers;
-        var property = PhotonNetwork.CurrentRoom.CustomProperties;
-        // 아직 플레이어가 스폰되지 않은 지역 중 랜덤으로 찾기
-
-        var n = -1;
-        for (var i = 0; i < max; i++)
-        {
-            var tmp = Random.Range(0, max);
-            if (!(bool)property[$"spawn{tmp}"])
-            {
-                n = tmp;
-                break;
-            }
-        }
-
-        // 해당 플레이어가 스폰할 지점의 값을 true로 바꿔서 다른 플레이어가 스폰하지 못하도록 하기
-        property[$"spawn{n}"] = true;
-        PhotonNetwork.CurrentRoom.SetCustomProperties(property);
-
-        var pos = GameManager.Instance.SpawnPositions[n];
-        transform.position = pos;
-
-        Debug.Log($"Spawned position: {n}");
     }
 }

@@ -832,7 +832,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _gameOverTitle: {fileID: 365981669}
   _gameOverDescription: {fileID: 1889246790}
-  _exitButton: {fileID: 2004474277}
 --- !u!1 &821438264
 GameObject:
   m_ObjectHideFlags: 0
@@ -1997,3 +1996,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0c078b88f01076479f3316d8b45fca3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _button: {fileID: 2056223632}
