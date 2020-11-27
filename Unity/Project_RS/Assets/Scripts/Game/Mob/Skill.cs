@@ -86,7 +86,6 @@ public abstract class Skill : MonoBehaviour
         }
 
         // Use를 사용하자마자 바로 쿨타임 적용
-        Attacker.StartCoroutine(DecreaseCooldown());
         Attacker.StartCoroutine(ExecuteLogic());
         return true;
     }
@@ -104,14 +103,5 @@ public abstract class Skill : MonoBehaviour
     /// <summary>
     /// 쿨타임을 다시 기본으로 맞추고 1초마다 줄인 후 0이 되면 실행을 종료한다.
     /// </summary>
-    private IEnumerator DecreaseCooldown()
-    {
-        var wait1sec = new WaitForSeconds(1f);
-        Cooldown = _defaultCooldown;
-        while (IsCooldown)
-        {
-            yield return wait1sec;
-            Cooldown--;
-        }
-    }
+
 }

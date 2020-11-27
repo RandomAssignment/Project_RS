@@ -40,12 +40,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4100068644474272608}
-  - component: {fileID: 4100068644474272607}
   - component: {fileID: 4100068644474272610}
   - component: {fileID: 4100068644474272606}
   - component: {fileID: 7425006531284731820}
   - component: {fileID: 7440283654042006887}
   - component: {fileID: 587212001488856507}
+  - component: {fileID: 3807269869086840188}
   m_Layer: 0
   m_Name: Slime
   m_TagString: Player
@@ -69,19 +69,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &4100068644474272607
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4100068644474272605}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &4100068644474272610
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -173,6 +160,20 @@ MonoBehaviour:
   _speed: 7
   _characterSkills:
   - {fileID: 2119905878903889164}
+--- !u!136 &3807269869086840188
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4100068644474272605}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4100068645431076839
 GameObject:
   m_ObjectHideFlags: 0
@@ -200,7 +201,7 @@ Transform:
   m_GameObject: {fileID: 4100068645431076839}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 1}
   m_Children: []
   m_Father: {fileID: 4100068644474272608}
   m_RootOrder: 0
@@ -244,7 +245,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 295408d34da154c48b937b30ff2723c5, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 02108a96eebf3c84a9d7a9d71d0e5d90, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

@@ -87,7 +87,7 @@ public abstract class Mob : MonoBehaviourPunCallbacks, IPunObservable
     /// key: 스킬의 게임오브젝트 이름<br/>
     /// value: 스킬 게임오브젝트가 가지고 있는 Skill 인스턴스
     /// </remarks>
-    protected Dictionary<string, Skill> _uniqueSkills;
+    protected List<Skill> _uniqueSkills;
 
     private Vector3 _currentPosition;
     private GameObject _sceneCamera;
@@ -109,10 +109,10 @@ public abstract class Mob : MonoBehaviourPunCallbacks, IPunObservable
         MobSprite = transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
         _sceneCamera = GameObject.FindGameObjectWithTag("MainCamera");
         _sceneCameraPos = _sceneCamera.transform.position;
-        _uniqueSkills = new Dictionary<string, Skill>();
+        _uniqueSkills = new List<Skill>(10);
         foreach (var skill in _characterSkills)
         {
-            _uniqueSkills.Add(skill.name, skill);
+            _uniqueSkills.Add(skill);
         }
 
         if (_infoUIPrefab != null)
@@ -127,9 +127,9 @@ public abstract class Mob : MonoBehaviourPunCallbacks, IPunObservable
 
     protected virtual void Update()
     {
-        if (photonView.IsMine)
+        if(photonView.IsMine)
         {
-            _sceneCamera.transform.position = transform.position + _sceneCameraPos;
+
         }
         else if ((transform.position - _currentPosition).sqrMagnitude >= 100)
         {
@@ -138,6 +138,14 @@ public abstract class Mob : MonoBehaviourPunCallbacks, IPunObservable
         else
         {
             transform.position = Vector3.Lerp(transform.position, _currentPosition, Time.deltaTime * 10);
+        }
+    }
+
+    protected virtual void FixedUpdate()
+    {
+        if (photonView.IsMine)
+        {
+            _sceneCamera.transform.position = Vector3.Lerp(_sceneCamera.transform.position, transform.position + _sceneCameraPos, Time.deltaTime * 8);
         }
     }
 
@@ -153,7 +161,7 @@ public abstract class Mob : MonoBehaviourPunCallbacks, IPunObservable
         {
             return;
         }
-        MobSprite.flipX = axis < 0;
+        MobSprite.flipX = axis > 0;
     }
 
     /// <summary>
@@ -173,12 +181,10 @@ public abstract class Mob : MonoBehaviourPunCallbacks, IPunObservable
     /// <param name="skillName">스킬 이름</param>
     /// <param name="direction">스킬을 사용하는 방향</param>
     [PunRPC]
-    protected virtual void UseSkillRPC(string skillName, Vector3 direction)
+    protected virtual void UseSkillRPC(int skillcount, Vector3 direction)
     {
-        if (_uniqueSkills.TryGetValue(skillName, out var skill))
-        {
-            skill.Use(direction);
-        }
+        Skill skill = _uniqueSkills[skillcount];
+        skill.Use(direction);
     }
 
     /// <summary>
@@ -187,9 +193,9 @@ public abstract class Mob : MonoBehaviourPunCallbacks, IPunObservable
     /// </summary>
     /// <param name="skillName">스킬 이름</param>
     /// <param name="direction">스킬을 사용하는 방향</param>
-    public void UseSkill(string skillName, Vector3 direction)
+    public void UseSkill(int skillcount, Vector3 direction)
     {
-        photonView.RPC(nameof(UseSkillRPC), RpcTarget.All, skillName, direction);
+        photonView.RPC(nameof(UseSkillRPC), RpcTarget.All, skillcount, direction);
     }
 
     /// <summary>

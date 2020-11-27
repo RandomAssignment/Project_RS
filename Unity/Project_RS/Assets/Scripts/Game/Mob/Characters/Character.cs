@@ -3,36 +3,17 @@ using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Character : Mob
 {
     #region Unity Field
     #endregion
-
+    private List<Skill> _useSkillList;
     private Rigidbody _objRigidbody;
-    private PlayerController _playerController;
-    private SkillController _skillController;
-
     protected override void InitializeMob()
     {
-        if (photonView.IsMine)
-        {
-            var playerController = GameObject.FindGameObjectWithTag("PlayerController");
-            var skillController = GameObject.FindGameObjectWithTag("SkillController");
-
-            Debug.Assert(playerController);
-            Debug.Assert(skillController);
-
-            _playerController = playerController.GetComponent<PlayerController>();
-            _playerController.SetTarget(this);
-
-            _skillController = skillController.GetComponent<SkillController>();
-            _skillController.SetTarget(this);
-            _skillController.gameObject.SetActive(false);
-        }
-
         _objRigidbody = gameObject.GetComponent<Rigidbody>();
-
         print(
             new StringBuilder()
             .AppendLine("\n[MOB_INFO]")
@@ -58,6 +39,22 @@ public class Character : Mob
         if (photonView.IsMine)
         {
             BattleManager.Instance.OnGameStart.RemoveListener(SpawnCharacter);
+        }
+    }
+
+    protected override void FixedUpdate()
+    {
+        base.FixedUpdate();
+        Move();
+        CharacterUseSkill();
+    }
+
+    void CharacterUseSkill()
+    {
+        Vector3 direction = Input.mousePosition - Camera.main.WorldToScreenPoint(transform.position);
+        if(Input.GetMouseButtonDown(0))
+        {
+            _useSkillList[0].Use(direction);
         }
     }
 
@@ -134,25 +131,19 @@ public class Character : Mob
     {
         gameObject.SetActive(false);
         InfoUI.SetActive(false);
-
-        if (photonView.IsMine)
-        {
-            _playerController.gameObject.SetActive(false);
-            _skillController.gameObject.SetActive(false);
-        }
     }
 
     /// <summary>
     /// RPC를 사용하여 게임 내 캐릭터를 움직입니다.
     /// </summary>
-    /// <param name="stickpos">캐릭터가 움직일 방향</param>
-    public void Move(Vector3 stickpos)
+    public void Move()
     {
-        if (PhotonNetwork.InRoom)
+        if (PhotonNetwork.InRoom && photonView.IsMine)
         {
             Debug.Assert(_objRigidbody);
-            _objRigidbody.transform.Translate(new Vector3(stickpos.x, 0, stickpos.y) * Time.deltaTime * Speed);
-            photonView.RPC(nameof(FlipSpriteRPC), RpcTarget.All, stickpos.x);
+            Vector3 direction = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
+            _objRigidbody.transform.Translate(new Vector3(direction.x, 0, direction.z) * Time.deltaTime * Speed);
+            photonView.RPC(nameof(FlipSpriteRPC), RpcTarget.All, direction.x);
         }
     }
 
@@ -161,7 +152,6 @@ public class Character : Mob
     /// </summary>
     private void SpawnCharacter()
     {
-        _skillController.gameObject.SetActive(true);
         RandomSpawnPlayer();
     }
 
@@ -197,5 +187,16 @@ public class Character : Mob
         transform.position = pos;
 
         Debug.Log($"Spawned position: {n}");
+    }
+
+    private IEnumerator DecreaseCooldown()
+    {
+        var wait1sec = new WaitForSeconds(1f);
+        Cooldown = _defaultCooldown;
+        while (IsCooldown)
+        {
+            yield return wait1sec;
+            Cooldown--;
+        }
     }
 }
