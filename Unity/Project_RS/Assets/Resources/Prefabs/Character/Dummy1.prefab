@@ -144,6 +144,7 @@ MonoBehaviour:
   _speed: 10
   _characterSkills:
   - {fileID: 1843982699508792043}
+  Cooldown: 
 --- !u!95 &8391740808246851404
 Animator:
   serializedVersion: 3
@@ -299,11 +300,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Punch
-      objectReference: {fileID: 0}
-    - target: {fileID: 3473022127456479211, guid: e1dc5b986729a7944a5990e3046d40d2,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6184009322952477982, guid: e1dc5b986729a7944a5990e3046d40d2,
         type: 3}

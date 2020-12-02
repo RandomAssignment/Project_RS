@@ -33,6 +33,8 @@ public class GameStartButton : MonoBehaviour
         PhotonNetwork.CurrentRoom.SetCustomProperties(property);
         PhotonNetwork.CurrentRoom.IsOpen = false;
 
+        GameManager.Instance.GameStart();
+
         gameObject.SetActive(false);
     }
 }

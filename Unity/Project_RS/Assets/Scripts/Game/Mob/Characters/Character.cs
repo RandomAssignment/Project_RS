@@ -4,12 +4,19 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public class Character : Mob
 {
     #region Unity Field
     #endregion
-    private List<Skill> _useSkillList;
+    private Skill[] _useSkillList;
+    /// <summary>
+    /// 스킬의 쿨타임
+    /// </summary>
+    [HideInInspector]
+    public int[] Cooldown;
+
     private Rigidbody _objRigidbody;
     protected override void InitializeMob()
     {
@@ -20,6 +27,19 @@ public class Character : Mob
             .AppendLine($"user name: {photonView.Controller.NickName}")
             .AppendLine($"user id: {photonView.Controller.UserId}")
             .Append($"type: {TypeName}"));
+    }
+    
+    public void SkillOn()
+    {
+        if (photonView.IsMine)
+        {
+            Cooldown = new int[4];
+            _useSkillList = new Skill[4];
+            for (int i = 0; i < 4; i++)
+            {
+                StartCoroutine(DecreaseCooldown(i, 0));
+            }
+        }
     }
 
     public override void OnEnable()
@@ -44,20 +64,46 @@ public class Character : Mob
 
     protected override void FixedUpdate()
     {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Debug.DrawRay(ray.origin,ray.direction, Color.red);
         base.FixedUpdate();
-        Move();
-        CharacterUseSkill();
+        if(photonView.IsMine)
+        {
+            Move();
+            CharacterUseSkill();
+        }
     }
 
     void CharacterUseSkill()
     {
-        Vector3 direction = Input.mousePosition - Camera.main.WorldToScreenPoint(transform.position);
-        if(Input.GetMouseButtonDown(0))
+        // 마우스 방향 측정
+        
+        // 왼쪽 마우스 작용 (스킬 사용)
+        if(Input.GetMouseButtonDown(0) && Cooldown[0] <= 0)
         {
-            _useSkillList[0].Use(direction);
+            // 사용 후 스킬 재배정
+            UseSkill(0,GetMouseDirection());
+
+            int randomskillnumber = Random.Range(0, _uniqueSkills.Count);
+            _useSkillList[0] = _uniqueSkills[randomskillnumber];
+            StartCoroutine(DecreaseCooldown(0, randomskillnumber));
         }
     }
 
+    Vector3 GetMouseDirection()
+    {
+        Vector3 direction;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+       
+        if(Physics.Raycast(ray, out hit, 300f, 1 << LayerMask.NameToLayer("Floor")))
+        {
+            direction = (hit.point - transform.position);
+            direction = new Vector3(direction.x, 0, direction.z);
+            return direction;
+        }
+        return Vector3.zero;
+    }
     public override void Hit(int damage, Mob attacker)
     {
         // 플레이어가 Hit당할 때는 때린 사람과 맞는 자신이 함께 존재하므로
@@ -189,14 +235,18 @@ public class Character : Mob
         Debug.Log($"Spawned position: {n}");
     }
 
-    private IEnumerator DecreaseCooldown()
+    private IEnumerator DecreaseCooldown(int count, int skillnumber)
     {
         var wait1sec = new WaitForSeconds(1f);
-        Cooldown = _defaultCooldown;
-        while (IsCooldown)
+        Cooldown[count] = _uniqueSkills[skillnumber].GetCoolDown();
+        _useSkillList[count] = _uniqueSkills[skillnumber];
+        GameManager.Instance.skillui.SetSkillUI(0, skillnumber);
+        GameManager.Instance.skillui.SetCoolDownText(count, Cooldown[count]);
+        while (Cooldown[count] > 0)
         {
             yield return wait1sec;
-            Cooldown--;
+            Cooldown[count]--;
+            GameManager.Instance.skillui.SetCoolDownText(count, Cooldown[count]); 
         }
     }
 }

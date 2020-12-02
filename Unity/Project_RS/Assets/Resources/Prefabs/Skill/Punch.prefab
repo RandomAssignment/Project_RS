@@ -47,7 +47,7 @@ MonoBehaviour:
   _name: "\uD380\uCE58"
   _description: "\uC804\uBC29\uC5D0 \uC624\uBE0C\uC81D\uD2B8\uB97C \uC0DD\uC131\uD558\uACE0
     \uB370\uBBF8\uC9C0\uB97C \uC900\uB2E4."
-  _defaultCooldown: 3
+  Cooldown: 5
   _damage: 40
 --- !u!135 &5369091552251929048
 SphereCollider:

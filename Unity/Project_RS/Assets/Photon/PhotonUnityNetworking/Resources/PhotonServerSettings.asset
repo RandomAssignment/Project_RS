@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PhotonServerSettings
   m_EditorClassIdentifier: 
   AppSettings:
-    AppIdRealtime: 2580d019-aeb0-4910-8d34-01d5b7e24a23
+    AppIdRealtime: dac96ade-173d-47a7-bcbf-c1fdb7589ebf
     AppIdChat: 
     AppIdVoice: 
     AppVersion: 
@@ -39,5 +39,5 @@ MonoBehaviour:
   - FlipSpriteRPC
   - UseSkillRPC
   DisableAutoOpenWizard: 1
-  ShowSettings: 0
+  ShowSettings: 1
   DevRegionSetOnce: 1

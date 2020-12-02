@@ -31,6 +31,7 @@ public sealed class Punch : Skill
         // NOTE: RPC는 UseSkill에서 사용했으므로 스킬에서 RPC를 사용할 필요는 없습니다.
         // e.g. SkillController.cs의 23번째 줄
         PunchOn();
+        yield return null;
         yield return new WaitForSeconds(0.2f);
         PunchOff();
     }
@@ -38,7 +39,8 @@ public sealed class Punch : Skill
     private void PunchOn()
     {
         _hitBox.enabled = true;
-        transform.localPosition = Direction;
+       
+        transform.localPosition = Direction.normalized;
     }
 
     private void PunchOff()

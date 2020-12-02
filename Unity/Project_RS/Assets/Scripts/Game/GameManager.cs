@@ -15,11 +15,19 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     [SerializeField]
     private GameObject _gameOverPanel = null;
+
+    [SerializeField]
+    private GameObject _skillPanel = null;
     #endregion
 
     public static GameManager Instance { get; private set; }
 
     public Vector3[] SpawnPositions => _spawnPositions;
+
+    [HideInInspector]
+    public Character localPlayer { get; private set; }
+    [HideInInspector]
+    public SkillUI skillui { get; private set; }
 
     private void Awake()
     {
@@ -31,8 +39,15 @@ public class GameManager : MonoBehaviourPunCallbacks
         // Debug.Assert(_playerPrefab != null, "플레이어 프리팹이 설정되어있지 않음");
         var playerType = (string)PhotonNetwork.LocalPlayer.CustomProperties["type"];
         print($"Player {PhotonNetwork.NickName} : type : {playerType}");
+        skillui = GetComponent<SkillUI>();
+        GameObject player = PhotonNetwork.Instantiate($"Prefabs/Character/{playerType}", _characterEnteredPosition, Quaternion.identity, 0);
+        localPlayer = player.GetComponent<Character>();
+    }
 
-        PhotonNetwork.Instantiate($"Prefabs/Character/{playerType}", _characterEnteredPosition, Quaternion.identity, 0);
+    public void GameStart()
+    {
+        localPlayer.SkillOn();
+        _skillPanel.SetActive(true);
     }
 
     public override void OnEnable()

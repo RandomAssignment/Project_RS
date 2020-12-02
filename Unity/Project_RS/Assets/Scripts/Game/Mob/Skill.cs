@@ -15,7 +15,7 @@ public abstract class Skill : MonoBehaviour
 
     [SerializeField]
     [Tooltip("스킬의 기본 쿨타임")]
-    private int _defaultCooldown = 0;
+    private int Cooldown;
     #endregion
 
     /// <summary>
@@ -29,24 +29,9 @@ public abstract class Skill : MonoBehaviour
     public string Description => _description;
 
     /// <summary>
-    /// 스킬의 기본 쿨타임
-    /// </summary>
-    public int DefaultCooldown => _defaultCooldown;
-
-    /// <summary>
-    /// 스킬의 현재 쿨타임
-    /// </summary>
-    public int Cooldown { get; set; }
-
-    /// <summary>
     /// 스킬의 방향
     /// </summary>
     public Vector3 Direction { get; private set; }
-
-    /// <summary>
-    /// 스킬이 현재 쿨타임인지를 반환
-    /// </summary>
-    public bool IsCooldown => Cooldown > 0;
 
     /// <summary>
     /// 스킬 오브젝트가 속한 Mob 오브젝트
@@ -74,10 +59,6 @@ public abstract class Skill : MonoBehaviour
         Direction = direction;
         Debug.Assert(Attacker, "Attacker is null");
         Debug.Assert(Attacker.photonView, "photonView is null");
-        if (IsCooldown)
-        {
-            return false;
-        }
 
         // 스킬 중복 실행 방지
         if (_executeCoroutine != null)
@@ -100,8 +81,5 @@ public abstract class Skill : MonoBehaviour
         _executeCoroutine = null;
     }
 
-    /// <summary>
-    /// 쿨타임을 다시 기본으로 맞추고 1초마다 줄인 후 0이 되면 실행을 종료한다.
-    /// </summary>
-
+    public int GetCoolDown() { return Cooldown; }
 }

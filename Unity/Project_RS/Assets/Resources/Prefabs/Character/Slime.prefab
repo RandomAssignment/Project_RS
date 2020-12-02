@@ -160,6 +160,7 @@ MonoBehaviour:
   _speed: 7
   _characterSkills:
   - {fileID: 2119905878903889164}
+  Cooldown: 
 --- !u!136 &3807269869086840188
 CapsuleCollider:
   m_ObjectHideFlags: 0
